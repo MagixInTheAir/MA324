@@ -103,4 +103,18 @@ venv.bak/
 # mypy
 .mypy_cache/
 
+# LATEX
+*.aux
+*.glo
+*.idx
+*.lof
+*.lot
+*.out
+*.xdy
+*.toc
+*.synctex.gz
+
+.vscode
+.vs
+
 C++/x64
