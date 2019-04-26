@@ -113,6 +113,15 @@ venv.bak/
 *.xdy
 *.toc
 *.synctex.gz
+.aux
+.glo
+.idx
+.lof
+.lot
+.out
+.xdy
+.toc
+.synctex.gz
 
 .vscode
 .vs
