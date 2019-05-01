@@ -1,15 +1,105 @@
 \chapter{Développement théorique des méthodes de descente}
+Le but de ce rapport est d'étudier les différentes possibilités afin de minimiser une fonction. Le problème se formule de la manière suivante : 
+\begin{equation}
+\argmin_x f(x)
+\end{equation}
+On cherche donc l'argument x tel que f(x) soit minimal.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 				METHODES DE DESCENTES
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Retour sur les méthodes de descente}
 \subsection{Motivation de l'étude et de l'intérêt}
 \subsection{Les méthodes de gradients}
+Les méthodes de gradients sont des méthodes de descentes. 
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 				KRYLOV
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction aux espaces de Krylov}
+Dans cette partie, nous allons introduire un outil mathématique important qui permet la justification de la méthode du gradient conjugué : les espaces de Krylov. 
 \subsection{Définition des espaces de Krylov}
 \subsection{Quelques propriétés}
+\subsection{Un premier algorithme : GMRES}
 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 				GRADIENT CONJUGUE
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{L'approche par les espaces de Krylov du gradient conjugué}
-à voir comment on répartit
+\subsection{Définition du gradient conjugué}
+Grâce aux espaces de krylov, nous sommes capable d'améliorer les algorithmes de gradient qui sont présentés ci-dessus. Nous partons donc d'un algorithme du gradient basique : 
+\begin{equation}
+\begin{cases}
+	x_0 \in \mathbb{R} \ \text{le choix initial}\\
+	x_{k+1} = x_k + \alpha_k (b - Ax_k)
+\end{cases}
+\end{equation}
+Nous définissons alors le vecteur résidu $r_k = b - Ax_k$ appartenant à l'espace de Krylov d'ordre k et définit par le résidu à l'origine : $r_0$. De ce fait, il vient que $x_{k+1}$ appartient à l'espace affine composé par le point $x_0$ et le k\up{ieme} espace de krylov : $\mathcal{K}_k$. Afin de simplifier notre exposé, nous supposons que nous avons affaire à des matrices symétriques définies positives. \\
 
-\section{D'autres algorithmes par les sous espaces de Krylov}
-\subsection{MINRES et GMRES}
-\subsection{Les algorith()mes BFGS}
+Dans la méthode du gradient conjugué, nous n'allons pas choisir la définition comme dans les autres méthodes de gradient mais nous avons d'autres critères qui sont plus intéressant : 
+\begin{itemize}
+	\item Le premier repose sur le principe d'orthogonalisation : 
+	\begin{equation}
+		\exists x_{k+1} \in [x_0 + \mathcal{K}_k], r_{k+1} \perp \mathcal{K}_k
+	\end{equation}
+	\item Le principe de minimisation : 
+	\begin{equation}
+		\exists x_{k+1} \in [x_0 + \mathcal{K}_k], \frac{1}{2}<Ax, x> - <b, x> \ \text{est minimal}
+	\end{equation}
+\end{itemize}
+Dans le cas d'une matrice symétrique définie positive, les deux choix ci-dessus donnent la même solution $x_{k+1}$ d'où le choix de A symétrique définie positive. \\
+Définissons ensuite le vecteur direction : 
+\begin{equation}
+d_k = x_{k+1} - x_k
+\end{equation}
+De part la construction de d, il  est possible de déduire quelques propriétés : 
+\begin{itemize}
+	\item L'espace de de Krylov est une combinaison linéaire des vecteurs $r_k$ et $d_k$
+	\begin{equation}
+	\mathcal{K}_k = vect{r_0, ..., r_k} = vect{d_0, ..., d_k}
+	\end{equation}
+	\item Tous les vecteurs de la suite sont orthogonaux : 
+	\begin{equation}
+		\forall 0 \leq l < k \leq n - 1, <r_k, r_l> = 0
+	\end{equation}
+	\item Les vecteurs de la suite $(d_k)$ sont conjugué selon le produit vectoriel défini par A : 
+	\begin{equation}
+		\forall 0 \leq l < k \leq n - 1, <Ad_k, d_l> = 0
+	\end{equation}
+\end{itemize}
+C'est grâce à cette dernière propriété que le gradient conjugué est appelé ainsi.
+\subsection{Propriétés du gradient conjugué}
+\subsection{Algorithme du gradient conjugué}
+\subsection{Quelques mots sur le gradient conjugué non-linéaire}
+Le but est ici de voir si l'on peut améliorer l'algorithme ci-dessus pour l'appliquer à des fonctions quadratiques non convexes voir non linéaires. Nous n'allons présenter ici que la méthode de Fletcher-Reeves. Cette méthode consiste en deux petits changement dans l'algorithme du CG. \\
+
+La première modification consiste à changer le calcul du pas de descente. En effet, nous 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 				ALGO DE TYPE NEWTON
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{D'autres algorithmes de minimisation}
+Dans cette partie, nous nous intéressons aux algorithmes de Newton qui sont d'autres algorithmes permettant une nouvelle approche des problèmes de minimisation.
+\subsection{Les algorithmes de Newton}
+Le but d'un algorithme de Newton est d'approximer notre fonction par le développement de Taylor de celle-ci à l'ordre 2. On peut donc dès lors remarquer que nous aurons besoin de la seconde dérivée de cette fonction (ou de la Hessienne en dimension supérieure). Le développement de Taylor est  : 
+\begin{equation}
+f(x+h) = f(x) + <h, \nabla f(x)> + \frac{1}{2} <h, H_f(x)h> + o(||h||^2)
+\end{equation}
+Le principe est assez simple : on se trouve au point x et nous allons choisir le point x+h comme prochain point tel que ce nouveau point minimise le développement de Taylor ci-dessus. Ce développement de Taylor s'apparente à une fonction quadratique.\\
+
+Dans ce type de méthode, nous choisissons notre direction de descente de la manière suivante : 
+
+\begin{equation}
+d_k = -\nabla^2f_k^{-1}\nabla f_k
+\end{equation}
+Bien entendu, dans la réalité, nous ne calculons pas l'inverse de la hessienne mais nous résolvons un système linéaire. Cette méthode peut donc paraître un peu lourde.
+\subsection{Les algorithmes de Quasi-Newton}
+Les algorithmes de Quasi-Newton se basent sur les algorithmes de Newton. Cependant, l'amélioration vient du fait qu'ils ne nécessitent pas la dérivée seconde de la fonction que l'on cherche à minimiser. En effet, nous allons choisir une direction de descente de la manière suivante : 
+
+\begin{equation}
+d_k = -B^{-1}\nabla f_k
+\end{equation}
+
+Avec B une matrice définie positive qui est recalculée à chaque itération afin d'approximer la valeur de la hessienne. 
