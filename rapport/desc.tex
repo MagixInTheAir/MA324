@@ -20,9 +20,199 @@ Les méthodes de gradients sont des méthodes de descentes.
 \section{Introduction aux espaces de Krylov}
 Dans cette partie, nous allons introduire un outil mathématique important qui permet la justification de la méthode du gradient conjugué : les espaces de Krylov. 
 \subsection{Définition des espaces de Krylov}
+Afin d'introduire les espaces de Krylov, nous allons prendre un exemple simple : celui d'un système linéaire. On cherche donc x qui vérifie l'équation : 
+\begin{equation}
+Ax = b
+\end{equation}
+On définit le vecteur résidu à l'itération k comme étant : 
+\begin{equation}
+r^k \triangleq b - Ax^k = -A ( - A^{-1}b + x^k) = -A (- x^* + x^k)
+\end{equation}
+Où $x^*$ est la solution réelle du système. Alors, nous pouvons écrire la solution au rang k+1, comme celle au rang k plus le résidu : 
+\begin{eqnarray}
+x^{k+1} &=& x^k + r^k\\
+\Leftrightarrow x^{k+1} - x^* &=& x^k - x^* + r^k\\
+\Leftrightarrow -A( x^{k+1} - x^*) &=& -A(x^k - x^*) - Ar^k\\
+\Leftrightarrow r^{k+1} &=& r^k - Ar^k
+\end{eqnarray}
+Dans cette dernière équation récursive, nous pouvons voir que $r^{k+1}$ est une combinaison linéaire des vecteurs $r^k$ précédents. Ainsi :
+\begin{equation}
+r^k \in Vect\{r^0, Ar^0, ..., A^kr^0\}
+\end{equation}
+Cela implique directement : 
+\begin{equation}
+x^k - x^0 = \sum_{i = 0}^{k-1}r^i
+\end{equation}
+Donc il vient que : 
+\begin{equation}
+x^k \in x^0 + Vect\{r^0, Ar^0, ..., A^kr^0\}
+\end{equation}
+Où $Vect\{r^0, Ar^0, ..., A^kr^0\}$ est le k-ième espace de Krylov généré par A à partir de $r^0$ noté $\mathcal{K}_k(A, r^0)$
 \subsection{Quelques propriétés}
+Maintenant que nous avons une définition de ces espaces, nous allons montrer plusieurs propriétés pour ensuite construire l'algorithme et l'implémenter. Le premier fait remarquable des espaces de Krylov est que par construction, nous avons :  
+\begin{equation}
+\mathcal{K}_{k - 1}(A, r^0) \in \mathcal{K}_k(A, r^0)
+\end{equation}
+Ensuite, il est important de montrer que la solution que l'on cherche appartient à cet espace. Nous reprenons donc notre système linéaire possédant une unique solution : 
+\begin{equation}
+Ax = b \label{pb}
+\end{equation}
+D'après la définition du problème, la matrice A est inversible. Nous supposons que l'on a le polynôme caractéristique de A :
+\begin{equation}
+P(\lambda) = \sum_{j = 0}^{n} \alpha_j t^j \Rightarrow P(0) = \alpha_0 = det(A) \neq 0
+\end{equation}
+Par le théorème de Cayley-Hamilton\footnote{\url{http://www.logique.jussieu.fr/~alp/Cayley_Hamilton.pdf}}, nous pouvons obtenir la valeur de $A^{-1}$ :
+\begin{eqnarray}
+P(A) = \alpha_0 I + \alpha_1 A + ... + \alpha_n A^n &=& 0 \\
+\alpha_0 A^{-1}A + \alpha_1 A + ... + \alpha_n A^n &=& 0 \\
+(\alpha_0 A^{-1} + \alpha_1  + ... + \alpha_n A^{n - 1})A &=& 0 \\
+\alpha_0 A^{-1} + \alpha_1  + ... + \alpha_n A^{n - 1} &=& 0
+\end{eqnarray}
+Ce qui donne finalement :
+\begin{equation}
+A^{-1} = - \frac{1}{\alpha_0} \times \sum_{j=0}^{n-1} \alpha_{j+1} A^j
+\end{equation}
+Or, la solution du problème \ref{pb} est : $x^* = A^{-1}b$. Ce qui peut s'écrire de la façon suivante : 
+\begin{equation}
+x^* = - \frac{1}{\alpha_0} \sum_{j=0}^{n-1} \alpha_{j+1} A^j b
+\end{equation}
+Ce vecteur appartient clairement à l'espace de Krylov défini par : 
+\begin{equation}
+x^* \in \mathcal{K}(A, b)
+\end{equation}
 \subsection{Un premier algorithme : GMRES}
+Un des algorithmes utilisant les espaces de Krylov est l'algorithme GMRES qui se trouve ci-dessous en python. Cette méthode repose sur les espaces de Krylov. En effet, dans cet algorithme nous choisissons $x_k \in \mathcal{K}_k(A, b)$ tel que l'on a $||b - Ax_k||_2$ qui est minimal. Nous nous reposons sur une méthode de projection. L'algorithme utilise aussi sur le procédé d'Arnoldi\footnote{\url{https://docplayer.fr/215470-Calcul-matriciel-et-systemes-lineaires.html} (page 36)} qui nous permet de créer une base orthonormée sur le sous-espace de Krylov. Dans la suite de ce chapitre, nous allons étudier ces composantes permettant d'arriver à l'écriture de notre algorithme.
 
+\subsubsection{Généralité}
+Nous avons le système linéaire suivant qui possède une unique solution $x^*$ : 
+\begin{equation}
+Ax = b
+\end{equation}
+Le résidu initial est  : 
+\begin{equation}
+r_0 = b - A x^{(0)}²
+\end{equation}
+L'algorithme GMRES repose sur une méthode de projection. On écrit donc le système sous sa forme résiduelle pour faire apparaître une projection : 
+\begin{equation}
+< b - Ax^*, v > = 0, \forall v \in \mathbb{R}^n \Leftrightarrow b - Ax^* \perp \mathbb{R}^n
+\label{pb_res}
+\end{equation}
+Le but est maintenant de construire des solutions par itérations. On se place dans un sous-espace $\K$ et on essaie de trouver dans ce sous-espace $x$ tel que : 
+\begin{equation}
+b - Ax \perp \K \Rightarrow <Au, v> = <b, v>, v \in \mathbb{K}
+\end{equation}
+On généralise cette méthode grâce à deux sous-espaces : $\K$ et  $\mathbb{L}$. On cherche $x \in u_0 + \K$ avec :
+\begin{equation}
+b - Ax \perp \mathbb{L} \Rightarrow \ <Au, v> = <b, v>, v \in \mathbb{L}
+\label{Petrov-Galerkin}
+\end{equation}
+C'est la condition de Petrov-Galerkin.
+
+Sous la forme matricielle, nous allons créer deux matrices V et W, de taille $n \times m$,  définies par les vecteurs des bases de $\K$ et $\mathbb{L}$ : 
+\begin{eqnarray}
+V &=& (V_1 \ V_2 \ ... \ V_m ) \\
+W &=& (W_1 \ W_2 \ ... \ W_m )
+\end{eqnarray}
+Soit $(y, z) \in (\mathbb{R}^m)^2$. Nous pouvons définir $v \in \K$ et $w \in \mathbb{L}$ :
+\begin{eqnarray}
+v &=& Vy\\
+w &=& Wz
+\end{eqnarray}
+Il nous faut maintenant trouver la solution de $ x = x_0 + Vy \in \K$. Alors, grâce à \ref{pb_res} et \ref{Petrov-Galerkin}, nous écrivons : 
+\begin{eqnarray}
+<Av, w> &=& <r0, w> \forall w \in L\\
+<AVy, Wz> &=& <r0, Wz> \forall z \in \mathbb{R}^m \\
+Avy &=& r0 \\
+y &=& (W^t A V)^{-1} W^tr^0
+\end{eqnarray}
+Nous obtenons donc la solution : 
+\begin{equation}
+x = x_0 + V (W^t A V)^{-1} W^tr^0
+\end{equation}
+Nous pouvons donc maintenant expliquer ce que notre méthode de projection va faire. Il faut savoir qu'une méthode de projection est itérative et va à chaque itération faire deux choses  :
+\begin{itemize}
+	\item construire les sous-espaces K et L
+	\item chercher la nouvelle itération dans $u + K$ par le procédé exposé ci-dessus.
+\end{itemize}
+Voici donc le principe général des méthodes de projection : 
+\begin{enumerate}
+	\item Choisir $\K^m$ et $\mathbb{L}^m$ : deux sous-espaces de $\mathbb{R}^n$ de même dimension m
+	\item Construire $V_m$ et $W_m$
+	\item Calculer le résidu : $r = b - Ax^{(k)}$
+	\item Résoudre le système $y = (W^t_m A V_m)^{-1} W^t_mr$
+	\item Créer la nouvelle solution : $x = x + V_m y$
+\end{enumerate}
+Pour créer le sous-espace L, il y a deux méthodes : 
+\begin{itemize}
+	\item $L = K$ donne lieu à la méthode du gradient conjugué (expliqué ci-dessous)
+	\item $L = AK$ donne lieu à la méthode GMRES.
+\end{itemize}
+La méthode du gradient conjugué ayant été vue en cours, nous avons choisi la deuxième méthode de génération de L. Dans les deux cas cela revient à résoudre le problème des moindres carrés : 
+\begin{equation}
+\begin{cases}
+\text{On cherche $x^{(k)} \in x_0 + \K_m$ tel que : }\\
+\underset{v \in \K_m}{min} \ \frac{1}{2}\|A \left(x_0 + v\right) - b\|^2_2
+\end{cases}
+\label{moindrecarre}
+\end{equation}
+La démonstration liant les deux problèmes ne sera pas réalisée ici. \footnote{Elle se trouve ici : \url{https://www2.mat.ulaval.ca/fileadmin/Cours/MAT-17992/notes_gmres.pdf}}
+\subsubsection{Explication de l'algorithme GMRES}
+Cet algorithme se base dans un premier temps sur les itérations d'Arnoldi. Ici nous ne présenterons que la version qui est moins sensible aux erreurs d'arrondi car notre but est de justifier l'implémentation numérique de l'algorithme. Ce procédé d'Arnoldi a pour but de créer une base orthonormée du sous-espace de Krylov. Le procédé se résume par : 
+\begin{enumerate}
+	\item $v_1 = \frac{r_0}{||r_0||}$
+	\item Pour j = 1, ..., m ; on calcule : $w = Avj$
+	\item Pour i = 1, ..., j ; on calcule : $w = w - (w, v_i) v_i$
+	\item $\bar{v}_{j+1} = \frac{w}{||w||}$
+\end{enumerate}
+
+Nous introduisons alors un objet : $\overline{H}_m = (h_{ij})$ la matrice de Hessenberg : 
+\begin{equation}
+h_{ij} = \begin{cases}
+<Av_j, v_i>, \ i\leq j \\
+||v_{j+1}||, \ i = j + 1 \\
+0, \ sinon
+\end{cases}
+\end{equation}
+Cet objet permet d'écrire de façon matricielle notre procédé car  : 
+\begin{equation}
+AV_m = V_{m+1}\overline{H}_m
+\end{equation}
+et : 
+\begin{eqnarray}
+\bar{v}_{j+1} &=& Av_j - \sum_{i=1}^{j} h_{i,j} v_i\\
+\Leftrightarrow Av_j &=& \bar{v}_{j+1} + \sum_{i=1}^{j} h_{i,j} v_i \\
+\Leftrightarrow Av_j &=& h_{j+1, j}v_{j+1} + \sum_{i=1}^{j} h_{i,j} v_i
+\end{eqnarray}
+Par ce  procédé, nous arrivons à construire une base orthonormée de l'espace de Krylov.\\
+
+Maintenant que nous avons cette base, nous pouvons résoudre le problème des moindres carrés exprimé ci-dessus (cf. équation \ref{moindrecarre}). Nous obtenons les propriétés suivantes (qui ne seront pas démontrées)  : 
+\begin{itemize}
+	\item $||r_{m+1}|| \leq ||r_m||$
+	\item L'algorithme converge en n itérations au maximum car $\mathcal{K}_m(A, r0) = \mathbb{R}^n$ \footnote{La démonstration se trouve ici : \url{https://www.math.kth.se/na/SF2524/matber15/gmres.pdf}}
+\end{itemize}
+Voici le code et le pseudo-code de l'algorithme : 
+\begin{minted}[linenos, autogobble, breaklines]{python}
+def GMRES(A, b, espilon):
+max_iter = A.shape[0] #Number of maxiter
+mat_q = np.zeros((max_iter, max_iter + 1))
+mat_h = np.zeros((max_iter + 1, max_iter))
+norm_b = np.linalg.norm(b)
+be1 = np.zeros(max_iter + 1)
+be1[0] = norm_b
+mat_q[:, 0] = 1 / np.linalg.norm(b) * b.T # On définit ici que l'on a forcément x0 = 0 (r0 = b)
+for j in range(max_iter):
+mat_q[:, j+1] = A @ mat_q[:, j]
+for i in range(j+1):
+mat_h[i, j] = mat_q[:, i] @ mat_q[:, j + 1]
+mat_q[:, j+1] -= mat_h[i, j] * mat_q[:, i]
+mat_h[j + 1, j] = np.linalg.norm(mat_q[:, j + 1])
+mat_q[:, j + 1] /= mat_h[j + 1, j]
+y = np.linalg.lstsq(mat_h, be1, rcond=None)[0]
+residue = np.linalg.norm(y) / norm_b
+if residue < espilon:
+return mat_q[:max_iter, :max_iter] @ y, residue
+return mat_q[:max_iter, :max_iter] @ y
+\end{minted}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 				GRADIENT CONJUGUE
@@ -70,12 +260,96 @@ De part la construction de d, il  est possible de déduire quelques propriétés
 	\end{equation}
 \end{itemize}
 C'est grâce à cette dernière propriété que le gradient conjugué est appelé ainsi.
-\subsection{Propriétés du gradient conjugué}
+\subsection{Propriétés de l'implémentation du gradient conjugué}
+
+Le gradient conjugué est aujourd'hui très utilisé dans différents domaines car c'est un algorithmes possédants des propriétés très intéressantes. La première d'entre-elles concerne le calcul des vecteurs de direction. En effet, nous avons vu plus haut, lors de la construction de la méthode, que chaque vecteur est un conjugué de chacun des vecteurs précédents. C'est un propriété important lors de l'implémentation logiciel de la technique puisque pour calculer le vecteur $d_k$ nous n'avons besoin que de $d_{k-1}$. \\
+
+Pour toutes méthodes numériques, il nous est important de montrer son utilité en étudiant la convergence : une méthode qui diverge est inutilisable et une méthode qui converge très lentement n'est guère plus utile. C'est pour cela que dans la suite de cette partie nous nous intéressons aux taux de convergence de notre gradient conjugué.
+
+Tout d'abord, nous rappelons que le gradient conjugué converge en n itération au maximum. En effet, la solution de notre problème appartient à l'espace de Krylov dans lequel nous cherchons la solution. La convergence n'est donc pas un problème. Ce qui peut poser des problèmes c'est la vitesse à laquelle nous allons vers cette solution. Pour cela, nous partons de l'expression de $x_{K+1}$ : 
+\begin{eqnarray}
+	x_{k+1} &=& x_0 + \alpha_0p_0 + ... + \alpha_kp_k\\
+	&=& x_0 + \gamma_0r_0 + \gamma_1Ar_0 + ... + \gamma_kA^kr_0
+\end{eqnarray}
+Pour trouver ces formules, nous appliquons juste la définition du gradient : nous partons d'un point $x_0$ et à chaque itération k nous avançons dans la direction $p_k$ avec un pas de $\alpha_k$. \\
+
+Dans cette expression on reconnait un polynôme dépendant de A : 
+\begin{equation}
+P_k(A) = \gamma_0 I + \gamma_1A + ... + \gamma_kA^k
+\end{equation}
+
+Ce qui simplifie l'expressions de $x_{k+1}$ en : 
+\begin{equation}
+x_{k+1} = x_0 + P_(A)r_0
+\end{equation}
+
+En utilisant la norme définit par le produit scalaire avec la matrice A, nous avons : 
+\begin{eqnarray}
+\frac{1}{2} ||x - x*||^2_A &=& \frac{1}{2}(x - x^*)^TA(x - x^*)\\
+&=& \frac{1}{2} (x^TAx + {x^*}^TAx^* - x^TAx^* - {x^*}^TAx)
+\end{eqnarray}
+Or par définition, A est symétrique, $b = Ax^*$ et en utilisant la propriété de commutation du produit scalaire, nous avons : 
+\begin{equation}
+\frac{1}{2} ||x - x*||^2_A = f(x) - f(x^*)
+\end{equation}
+avec $f(x) = \frac{1}{2}x^TAx - b^Tx$
+À chaque nouvelle itération nous allons donc minimiser cette expression pour tout x habitant dans l'espace de Krylov : 
+\begin{equation}
+\min_{P_k} ||x_0 + P_k(A)r_0 - x^*||_A
+\end{equation}
+En introduisant cette minimisation dans l'expression du résidue et le fait que $r_0 = A(x_0 - x^*)$, il vient : 
+\begin{equation}
+x_{k+1} - x^* = x_0 + P_k^*(A)r_0 - x^* = [I + P_k^*(A)A](x_0 - x^*)
+\end{equation}
+On décompose A grâce à ses valeurs propres : 
+\begin{equation}
+A = \sum_{i = 1}^{n} \lambda_i v_i v_i^T
+\end{equation}
+Et comme les vecteurs propres $v_i$ de A décrivent $\mathbb{R}$ : 
+\begin{equation}
+x_0 - x^* = \sum^n_{i = 1} \xi_iv_i
+\end{equation}
+Nous introduisons ici une propriété de $P_k(A)$ du fait de sa construction : 
+\begin{equation}
+P_k(A)v_i = P_k(\lambda_i)v_i \forall i = 1, 2, ..., n
+\end{equation}
+Ainsi, en utilisant les équations ci-dessus : 
+\begin{equation}
+x_{k+1} - x^* = \sum_{i = 1}^{n} [1 + \lambda_i P_k^*(\lambda_i)]\xi_iv_i
+\end{equation}
+On rappelle cette propriété du calcul d'une norme selon une matrice A : 
+$$||z||^2_A = \sum_{i=1}^{n}\lambda_i(v_i^Tz)^2$$
+Ce qui nous permet d'écrire : 
+\begin{equation}
+||x_{k+1} - x^*||^2_A = min_{P_k} \sum_{i = 1}^{n} \lambda_i[1 + \lambda_iP_k(\lambda_i)]^2\xi^2
+\end{equation}
+Le minimum apparaît du fait que le polynôme généré est optimal au regard de la minimisation réalisé dans l'espace de Krylov (Propriété non démontrée ici).
+
+Nous avons donc exprimé la converge de notre algoritme. Le taux de convergence du gradient conjugué est donné par : 
+\begin{equation}
+\min_{P_k}max_{i \leq i \leq n} [1 + \lambda_iP_k(\lambda_i)]^2
+\end{equation}
+
+Nous en déduisons les propriétés suivantes (non démontrées) : 
+\begin{itemize}
+	\item Si A possède r < n valeurs propres distinctes alors le gradient conjugué va se terminer avec au plus r itérations
+	\item Soit $\lambda_i$ les valeurs propres de A. Nous avons alors : 
+	\begin{equation}
+	||x_{k+1} - x^*||^2_A \leq \left( \frac{\lambda_{n - k} - \lambda_1}{\lambda_{n - k} + \lambda_1} \right)^2 ||x_0 - x^*||^2_A
+	\end{equation}
+\end{itemize}
+
+Grâce à toutes ses propriétés, on peut montrer que le gradient conjugué est bien meilleurs que les méthodes de descentes classiques. En effet, il converge bien plus vite et nous sommes sûr qu'il atteindra la solution de notre problème.
 \subsection{Algorithme du gradient conjugué}
 \subsection{Quelques mots sur le gradient conjugué non-linéaire}
 Le but est ici de voir si l'on peut améliorer l'algorithme ci-dessus pour l'appliquer à des fonctions quadratiques non convexes voir non linéaires. Nous n'allons présenter ici que la méthode de Fletcher-Reeves. Cette méthode consiste en deux petits changement dans l'algorithme du CG. \\
 
-La première modification consiste à changer le calcul du pas de descente. En effet, nous 
+La première modification consiste à changer le calcul du pas de descente. En effet, comme nous ne sommes plus dans le cas quadratique, il est beaucoup moins facile de trouver le pas de descente. Afin de trouver ce pas optimal, il nous faut minimiser la fonction partielle dans la direction $p_k$. De plus, le résidue qui était jusqu'à lors le gradient de la fonction quadratique devient ici le gradient de la fonction non-linéaire. Cette partie n'étant qu'une ouverture à l'étude non-linéaire, nous allons uniquement détailler sommairement comment choisir le nouvel $\alpha$ et présenter un algorithme. 
+
+Tout d'abord, voici l'algorithme de Fletcher-Reeves : 
+
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 				ALGO DE TYPE NEWTON
@@ -102,4 +376,4 @@ Les algorithmes de Quasi-Newton se basent sur les algorithmes de Newton. Cependa
 d_k = -B^{-1}\nabla f_k
 \end{equation}
 
-Avec B une matrice définie positive qui est recalculée à chaque itération afin d'approximer la valeur de la hessienne. 
+Avec B une matrice définie positive qui est recalculée à chaque itération afin d'approximer la valeur de la hessienne. L'algorithme de Quasi-Newton que nous allons étudier ci-dessous est  la méthode BFGS. Il existe plusieurs dérivées de cette méthode mais elle repose sur le même principe de base.
