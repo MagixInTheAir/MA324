@@ -3,7 +3,12 @@ Le but de ce rapport est d'étudier les différentes possibilités afin de minim
 \begin{equation}
 \argmin_x f(x)
 \end{equation}
-On cherche donc l'argument x tel que f(x) soit minimal.
+
+On cherche donc l'argument x tel que f(x) soit minimal. On se donne deux conditions essentielles car sans celles-ci, l'étude devient beaucoup plus complexe. \\
+
+On pose donc que la fonction $f$ que l'on cherche à minimiser est une fonction convexe afin d'utiliser les outils de l'analyse convexe. De plus, on suppose que $f$ est deux fois différentiable sur $\mathbb{R}^n$. Cette deuxième hypothèse est importante puisque pour une fonction convexe, il nous sera possible de faire un développement limité et puisque $f$ est fortement convexe, la solution de notre problème d'optimisation sera unique et le développement limité obtenu sera assimilé à une quadratique.\\
+
+ Ainsi, cela nous permettra approximativement, de nous replacer dans le cadre d'un problème de minimisation quadratique (en tenant ensuite compte du reste).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 				METHODES DE DESCENTES
