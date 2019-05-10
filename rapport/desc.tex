@@ -1,23 +1,48 @@
 \chapter{Développement théorique des méthodes de descente}
+
 Le but de ce rapport est d'étudier les différentes possibilités afin de minimiser une fonction. Le problème se formule de la manière suivante : 
 \begin{equation}
 \argmin_x f(x)
 \end{equation}
 
-On cherche donc l'argument x tel que f(x) soit minimal. On se donne deux conditions essentielles car sans celles-ci, l'étude devient beaucoup plus complexe. \\
-
-On pose donc que la fonction $f$ que l'on cherche à minimiser est une fonction convexe afin d'utiliser les outils de l'analyse convexe. De plus, on suppose que $f$ est deux fois différentiable sur $\mathbb{R}^n$. Cette deuxième hypothèse est importante puisque pour une fonction convexe, il nous sera possible de faire un développement limité et puisque $f$ est fortement convexe, la solution de notre problème d'optimisation sera unique et le développement limité obtenu sera assimilé à une quadratique.\\
-
- Ainsi, cela nous permettra approximativement, de nous replacer dans le cadre d'un problème de minimisation quadratique (en tenant ensuite compte du reste).
+Nous utiliserons des méthodes de descentes afin de résoudre ce type de problème mais avant tout, il est nécessaire de définir l'intérêt de résoudre un tel type de problème puis de l'encadrer.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 				METHODES DE DESCENTES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Retour sur les méthodes de descente}
 \subsection{Motivation de l'étude et de l'intérêt}
-\subsection{Les méthodes de gradients}
-Les méthodes de gradients sont des méthodes de descentes. 
+Lorsque nous traitons d'optimisation, la fonction dont nous cherchons généralement l'$\argmin$, sont des fonctions objectif. Ces fonctions à minimiser sont présentes dans de nombreux domaines très différents dont l'économie, la mécanique, la production industrielle ou dans la gestion de flux et de réseaux. Les applications sont nombreuses. Il est donc important de pouvoir trouver des méthodes efficaces de résolution à ce problème général. 
+\subsection{Encadrement du problème}
+On cherche donc l'argument x tel que $f(x)$ soit minimal, $f$ étant une fonction deux fois différentiable sur $\mathbb{R}^n$. On se donne deux conditions essentielles car sans celles-ci, l'étude devient beaucoup plus complexe. \\
 
+On pose donc que la fonction $f$ que l'on cherche à minimiser est une fonction strictement convexe afin d'utiliser les outils de l'analyse convexe. De plus, on suppose que $f$ est coercive sur l'ensemble d'étude $R^n$. Mathématiquement, ces deux conditions se traduisent par :
+$$
+\forall t \in ]0;1[, \forall (x,y) \in \mathbb{R}^2, x\neq y, f(tx+t(1-t)y)<tf(x)+(1-t)f(y) 
+$$
+\begin{center}
+	et
+\end{center}
+$$
+\lim\limits_{|x|\rightarrow +\infty}f(x)=+\infty
+$$
+
+La coercivité permet d'assurer l'existence d'une solution et la stricte convexité permet de limiter le nombre de solution à une, au plus. En posant ces deux conditions, notre problème d'optimisation aura une solution unique que l'on notera $x^*$.
+
+\subsection{Intérêt d'une fonction $\mathcal{C}^2$ sur $\mathbb{R}^n$}
+Dans ce mémoire nous nous intéressons uniquement aux fonctions objectif qui sont deux fois différentiables sur $\mathbb{R}^n$, voir de classe $\mathcal{C}^2$. \\
+
+Cela a son importance puisque dans bons nombres de cas, nous effectuerons un développement de limité sur la fonction $f$, localement, afin d'obtenir une forme quadratique plus un reste qui dépendra de choix que nous effectuerons (Reste de Young, reste intégral ou reste de Taylor-McLaurin). \\
+
+Notre problème d'optimisation différentiable se rapprochera donc d'un problème de minimisation quadratique et nous pourrons ainsi trouver un minimiseur local qui, dans le cadre d'une fonction strictement convexe et coercive, sera le minimum global unique recherché.
+\subsection{Les méthodes de gradients}
+Les méthodes de gradients sont des méthodes de descentes basées sur la connaissance du gradient de la fonction objectif. Nous verrons trois méthodes de descente de gradient classiques qui sont :
+\begin{enumerate}
+	\item Le gradient à pas fixe
+	\item Le gradient à pas optimal
+	\item Le gradient conjugué
+\end{enumerate}
+\subsubsection{Méthode du gradient à pas fixe}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 				KRYLOV
