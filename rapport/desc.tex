@@ -61,7 +61,7 @@ La méthode du gradient à pas fixe est la plus simple à mettre en place. Cepen
 \end{algorithm}
 \subsubsection{Méthode du gradient à pas optimal}
 Une manière d'améliorer les performances de l'algorithme serait d'y faire une recherche de pas optimal à chaque tour.
-\begin{algorithm}
+\begin{algorithm}[H]
 	\begin{algorithmic}[1]
 		\Procedure{Méthode du gradient à pas  optimal}{$x_0,n_{Max},\rho_0$}
 		\State Soit $i=1$
@@ -75,7 +75,7 @@ Une manière d'améliorer les performances de l'algorithme serait d'y faire une 
 	\end{algorithmic}
 \end{algorithm}
 L'algorithme de recherche du pas est :
-\begin{algorithm}
+\begin{algorithm}[H]
 	
 	\begin{algorithmic}[1]
 		\Procedure{Recherche du pas inexact}{$x^{(i)},d^{(i)},\rho_0,tolR$}
