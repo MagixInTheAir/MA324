@@ -42,8 +42,11 @@ Les méthodes de gradients sont des méthodes de descentes basées sur la connai
 	\item Le gradient à pas optimal
 	\item Le gradient conjugué
 \end{enumerate}
-
+\subsubsection{Principes}
+L'idée derrière ces méthodes est de trouver $\argmin_x f(x)$ à partir d'un point initial puis d'en choisir une direction et un pas de descente. L'efficacité de l'algorithme sera grandement influencée par le pas de descente. Le choix de ce paramètre donne naissance aux trois méthodes que nous étudions.
 \subsubsection{Méthode du gradient à pas fixe}
+La méthode du gradient à pas fixe est la plus simple à mettre en place. Cependant, elle peut être dangereuse puisque l'on peut se dire qu'un pas très grand permettra d'atteindre la solution recherché plus rapidement. Cela induit en erreur puisque dans un tel cas (grand pas), il est possible d'osciller autour de la solution sans jamais l'atteindre à un seuil de précision convenable.
+
 \subsubsection{Méthode du gradient à pas optimal}
 \subsubsection{Méthode du gradient conjugué}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
