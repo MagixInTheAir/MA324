@@ -504,7 +504,44 @@ Dans ce type de méthode, nous choisissons notre direction de descente de la man
 \begin{equation}
 d_k = -\nabla^2f_k^{-1}\nabla f_k
 \end{equation}
-Bien entendu, dans la réalité, nous ne calculons pas l'inverse de la hessienne mais nous résolvons un système linéaire. Cette méthode peut donc paraître un peu lourde.
+Bien entendu, dans la réalité, nous ne calculons pas l'inverse de la hessienne mais nous résolvons un système linéaire. Cette méthode peut donc paraître un peu lourde. De plus, nous avons une contrainte sur la matrice Hessienne. En effet, celle-ci doit absolument être définie positive. Cela vient du fait que l'on cherche un minimum et qu'il faut absolument que cette matrice soit non-singulière pour pouvoir trouver une nouvelle direction de descente. Si cette matrice ne l'est pas, il est possible de la modifier par l'approche de Goldfeld, Quandt et Trotter : 
+\begin{equation}
+\hat{H}_k = \frac{H_k + \beta I}{1 + \beta}
+\end{equation}
+Une seconde approche serait de transformer la hessienne  : 
+\begin{equation}
+\hat{H}_k = U^TH_kU + \epsilon
+\end{equation}
+Avec $\epsilon$ une matrice diagonale. Le but est de choisir U telle que $\hat{H}_k$ soit diagonale car cela simplifie les calculs de l'algorithme. Le problème de cette dernière méthode est qu'il faut beaucoup de temps de calcul pour trouver la matrice U. \\
+
+Nous allons énoncer deux théorèmes sur la convergence de cette méthode : 
+
+\begin{theoreme}
+On suppose que l'on possède un point $\hat{x} \in \mathbb{R}^n$ tel que : 
+\begin{itemize}
+	\item C'est un point critique
+	\item $H_f(\hat{x})$ est non-singulière
+	\item $H_f(\hat{x})$ est lipschitzienne au voisinage de $\hat{x}$
+\end{itemize}
+Il existe $\varepsilon > 0$ tel que la méthode de Newton converge quadratiquement vers $H_f(\hat{x})$
+\end{theoreme}
+
+\begin{theoreme}
+Soit f une fonction $C^2$ et soit $x_0 \in \mathbb{R}^n$. On suppose que f est convexe et que la matrice Hessienne possède de bonnes propriétés :  $ 0 < cI_n < H_f(x) < KI_n$. Alors la fonction f admet un unique minimiseur et la méthode de Newton converge vers celui-ci.\\
+Si $H_f$ est M-Lipschitzienne dans le voisinage de ce minimiseur : 
+\begin{itemize}
+	\item Le pas $\alpha_k$ converge vers 1,
+	\item L'algorithme possède une convergence quadratique.
+\end{itemize}
+\end{theoreme}
+
+Néanmoins, il existe plusieurs problèmes avec l'utilisation informatique de cette méthode de Newton : 
+\begin{itemize}
+	\item Il faut calculer la matrice Hessienne ce qui peut devenir très vite très coûteux.
+	\item L'inversion de cette hessienne est aussi très coûteuse et très lente en fonction de la taille de celle-ci
+	\item La condition qui oblige la hessienne à être définie positive à chaque étape est très restrictive. 
+\end{itemize}
+C'est pour cela que nous avons élaboré les méthodes de Quasi-Newton.
 \subsection{Les algorithmes de Quasi-Newton}
 Les algorithmes de Quasi-Newton se basent sur les algorithmes de Newton. Cependant, l'amélioration vient du fait qu'ils ne nécessitent pas la dérivée seconde de la fonction que l'on cherche à minimiser. En effet, nous allons choisir une direction de descente de la manière suivante : 
 
@@ -512,4 +549,38 @@ Les algorithmes de Quasi-Newton se basent sur les algorithmes de Newton. Cependa
 d_k = -B^{-1}\nabla f_k
 \end{equation}
 
-Avec B une matrice définie positive qui est recalculée à chaque itération afin d'approximer la valeur de la hessienne. L'algorithme de Quasi-Newton que nous allons étudier ci-dessous est  la méthode BFGS. Il existe plusieurs dérivées de cette méthode mais elle repose sur le même principe de base.
+Avec B une matrice définie positive qui est recalculée à chaque itération afin d'approximer la valeur de la hessienne. L'algorithme de Quasi-Newton que nous allons étudier ci-dessous est  la méthode BFGS. Il existe plusieurs dérivées de cette méthode mais elle repose sur ce même principe de base. La partie théorique étant longue, nous allons dans la suite présenter le pseudo-code de la méthode et quelques-unes de ses propriétés. Avant d'exposer l'algorithme, il faut savoir que dans cet algorithme, nous approximons la hessienne grâce à la formule : 
+
+\begin{equation}
+H_{k+1} = (I - \rho_ks_ky_k^T)H_k(I-\rho_ky_ks_k^T)+ \rho_ks_ks_k^T
+\end{equation}
+Avec : 
+\begin{itemize}
+	\item $s_k = x_{k+1} - x_k$
+	\item $y_k = \nabla_{k+1} - \nabla_k$
+	\item $rho_k = \frac{1}{y_k^T s_k}$
+\end{itemize}
+
+\begin{algorithm}[H]
+	\caption{Quasi-Newton BFGS}
+	\begin{algorithmic}[1]
+		\Require $x_0$, $\varepsilon > 0$ comme tolérance et $H_0$ une approximation de la hessienne.
+		\State  $k  =0$
+		\While{$||\nabla f_k || > \varepsilon$}
+		\State $p_k = -H_k\nabla f_k$
+		\State $x_{k+1} = x_{k} + \alpha_k p_k$
+		\State $s_k = x_{k+1} - x_k$
+		\State $y_k = \nabla_{k+1} - \nabla_k$
+		\State Calculer la nouvelle approximation de la Hessienne
+		\State k = k+1
+		\EndWhile
+		
+	\end{algorithmic}
+\end{algorithm}
+
+Cette algorithme possède un taux de convergence qui est super linéaire. De plus, nous pouvons énoncer le théorème suivant (même si nous n'allons pas le démontrer) : 
+
+\begin{theoreme}
+		Soit $f$ une fonction $C^2$. On se donne $x_0 \in \mathbb{R}^n$ et on suppose $S_0 = {x\in \mathbb{R}^n, f(x) \leq f(x_0)}$ est convexe et que l'approximation de notre matrice Hessienne ne diverge pas : $ 0 < cI_n < H_f(x) < KI_n$. Alors, la suite des valeurs $(x_k)$ solutions de notre problème de minimisation converge vers $x^*$, l'unique minimiseur. De plus, si $H_f$ est Lipschitzienne dans un voisinage de $x^*$, alors la convergence est super-linéaire
+\end{theoreme}
+
