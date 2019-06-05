@@ -5,16 +5,16 @@ Le but de ce rapport est d'étudier les différentes possibilités afin de minim
 \argmin_x f(x)
 \end{equation}
 
-Nous utiliserons des méthodes de descentes afin de résoudre ce type de problème mais avant tout, il est nécessaire de définir l'intérêt de résoudre un tel type de problème puis de l'encadrer.
+Nous utiliserons des méthodes de descente afin de résoudre ce type de problème mais avant tout, il est nécessaire de définir l'intérêt de résoudre un tel type de problème puis de l'encadrer.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 				METHODES DE DESCENTES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Retour sur les méthodes de descente}
 \subsection{Motivation de l'étude et de l'intérêt}
-Lorsque nous traitons d'optimisation, la fonction dont nous cherchons généralement l'$\argmin$, sont des fonctions objectif. Ces fonctions à minimiser sont présentes dans de nombreux domaines très différents dont l'économie, la mécanique, la production industrielle ou dans la gestion de flux et de réseaux. Les applications sont nombreuses. Il est donc important de pouvoir trouver des méthodes efficaces de résolution à ce problème général. 
+Lorsque nous traitons d'optimisation, la fonction dont nous cherchons généralement l'$\argmin$, est une fonction objectif. Ces fonctions à minimiser sont présentes dans de nombreux domaines très différents dont l'économie, la mécanique, la production industrielle ou dans la gestion de flux et de réseaux. Les applications sont nombreuses. Il est donc important de pouvoir trouver des méthodes efficaces de résolution de ce problème général. 
 \subsection{Encadrement du problème}
-On cherche donc l'argument x tel que $f(x)$ soit minimal, $f$ étant une fonction deux fois différentiable sur $\mathbb{R}^n$. On se donne deux conditions essentielles car sans celles-ci, l'étude devient beaucoup plus complexe. \\
+On cherche donc l'argument $x$ tel que $f(x)$ soit minimal, $f$ étant une fonction deux fois différentiable sur $\mathbb{R}^n$. On se donne deux conditions essentielles car sans celles-ci, l'étude devient beaucoup plus complexe. \\
 
 On pose donc que la fonction $f$ que l'on cherche à minimiser est une fonction strictement convexe afin d'utiliser les outils de l'analyse convexe. De plus, on suppose que $f$ est coercive sur l'ensemble d'étude $R^n$. Mathématiquement, ces deux conditions se traduisent par :
 $$
@@ -27,7 +27,7 @@ $$
 \lim\limits_{|x|\rightarrow +\infty}f(x)=+\infty
 $$
 
-La coercivité permet d'assurer l'existence d'une solution et la stricte convexité permet de limiter le nombre de solution à une, au plus. En posant ces deux conditions, notre problème d'optimisation aura une solution unique que l'on notera $x^*$.
+La coercivité permet d'assurer l'existence d'une solution et la stricte convexité de limiter le nombre de solution à une, au plus. En posant ces deux conditions, notre problème d'optimisation aura une solution unique que l'on notera $x^*$.
 
 \subsection{Intérêt d'une fonction $\mathcal{C}^2$ sur $\mathbb{R}^n$}
 Dans ce mémoire nous nous intéressons uniquement aux fonctions objectif qui sont deux fois différentiables sur $\mathbb{R}^n$, voir de classe $\mathcal{C}^2$. \\
