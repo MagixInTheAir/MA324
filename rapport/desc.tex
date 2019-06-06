@@ -466,7 +466,7 @@ Le but est ici de voir si l'on peut améliorer l'algorithme ci-dessus pour l'app
 
 La première modification consiste à changer le calcul du pas de descente. En effet, comme nous ne sommes plus dans le cas quadratique, il est beaucoup moins facile de trouver le pas de descente. Afin de trouver ce pas optimal, il nous faut minimiser la fonction partielle dans la direction $p_k$. De plus, le résidue qui était jusqu'à lors le gradient de la fonction quadratique devient ici le gradient de la fonction non-linéaire. Cette partie n'étant qu'une ouverture à l'étude non-linéaire, nous allons uniquement détailler sommairement comment choisir le nouvel $\alpha$ et présenter un algorithme. 
 
-Tout d'abord, voici l'algorithme de Fletcher-Reeves : 
+Voici l'algorithme de Fletcher-Reeves : 
 
 \begin{algorithm}[H]
 	\caption{Méthode du gradient conjugué}
@@ -486,7 +486,20 @@ Tout d'abord, voici l'algorithme de Fletcher-Reeves :
 	\end{algorithmic}
 \end{algorithm}
 
+Pour définir le $\alpha$, nous allons utiliser la condition forte de Wolfe : 
+\begin{equation}
+f(x_k + \alpha_kp_k) \leq f(x_k) + c_1\alpha_k \nabla f_k^Tp_k
+\end{equation}
+\begin{equation}
+|\nabla f(x_k + \alpha_kp_k)^T p_k| \leq -c_2 \nabla f_k^Tp_k, 0 < c_1 < c_2 < \frac{1}{2}
+\end{equation}
 
+Si l'on prends $\alpha$ satisfaisant cela, alors nous savons que les directions de descentes vérifient : 
+\begin{equation}
+-\frac{1}{1 - c_2}\leq \frac{\nabla f_k^Tp_k}{||\nabla f_k||^2} \leq \frac{2c_2 - 1}{1 - c_2}
+\end{equation}
+
+Ceci permet d'assurer que les valeurs $p_k$ est une direction de descente (Démonstration non-réalisée car longue et compliquée).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 				ALGO DE TYPE NEWTON
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
