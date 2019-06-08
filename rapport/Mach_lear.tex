@@ -62,11 +62,123 @@ L'intelligence artificielle représente un ensemble de théories et techniques d
 	
 	
 \subsection{Fonction d'activation}
-	Nous n'avons pas encore parler de la fonction d'activation, ici $\varphi$. Son rôle est de dire si un neurone doit être "actif" ou non, selon la valeur de la somme pondérée. Nous nous attarderons pas trop dessus mais il faut tout de même savoir quelle fonction prendre on utilise afin de la dériver par la suite. Une des fonctions d'activation les plus répandues est la fonction sigmoïde définie par $\sigma(x) = \frac{e^x}{1+e^x}$.
-	
+	Nous n'avons pas encore parler de la fonction d'activation, ici $\varphi$. Son rôle est de dire si un neurone doit être "actif" ou non, selon la valeur de la somme pondérée. Nous nous attarderons pas trop dessus mais il faut tout de même savoir quelle fonction prendre on utilise afin de la dériver par la suite. Une des fonctions d'activation les plus répandues est la fonction sigmoïde définie par $\sigma(x) = \frac{e^x}{1+e^x}$ et dont les valeurs sont comprises entre \mbox{$0$ et $1$.}
+		
 \subsection{Fonction erreur}
-	Après la chaque phase avant, on obtient des valeurs pour chacun des neurones de la couche de sortie. Cependant ces valeurs ont été calculées à partir d'entrées initialisées aléatoirement. Il faut donc comparer ces résultats avec ceux attendus. 
-
+	Après la chaque phase avant, on obtient des valeurs pour chacun des neurones de la couche de sortie. Cependant ces valeurs ont été calculées à partir d'entrées initialisées aléatoirement. Il faut donc comparer ces résultats avec ceux attendus. Plusieurs fonctions erreurs permettent de faire cela. Une liste non exhaustive est disponible \href{https://stats.stackexchange.com/questions/154879/a-list-of-cost-functions-used-in-neural-networks-alongside-applications}{ici}. On peut par exemple citer la fonction d'erreur quadratique : 
+	$$C_{MST}(W, B, S^r, E^r) = 0.5\sum\limits_j (a^L_j - E^r_j)^2$$
+	où W est la matrice des poids du réseau de neurones, $B$ contient les biais, $S^r$, l'entrée d'une phase avant et $E^r$, la sortie attendue.\\
 	
+	C'est lors de la phase d'apprentissage que l'on est face à un problème d'optimisation. L'objectif est ici de minimiser cette fonction erreur. On utilise pour cela une méthode de descente de gradient. Cependant, de cette manière nous ne sommes pas toujours certain de trouver le minimum global de la fonction. C'est pourquoi il faut parfois utiliser la fonction logarithme. C'est le cas de la \textit{L2-regularized cost function} :
+	$$J(\theta) = -{1 \over m} \left[ \sum_{i=1}^m \sum_{k=1}^K y_k^{(i)}\,log(h_\theta(x^{(i)}))_k + (1-y_k^{(i)})\,log(1 - (h_\theta(x^{(i)}))_k) \right] + {\lambda \over 2m } \sum_{l=1}^{L-1} \sum_{i=1}^{s_l} \sum_{j=1}^{s_{l+1}} (\theta_{ji}^{(l)})^2$$
+
+	Pendant la phase arrière, les poids et biais sont mis à jour. La phase avant s'exécute à nouveau, recalculant les valeurs des différents neurones jusqu'à la couche de sortie. Cette alternance entre les deux phases se répète jusqu'à ce que l'erreur soit suffisamment faible ou lorsqu'une condition d'arrêt est atteinte.	
 	
 \section{Application des algorithmes}
+	Nous voilà donc avec un ensemble de valeurs de sortie proches de nos attentes. Mais quelles attentes ? Que signifient ces valeurs ? \\
+	
+	Nous avons choisi pour ce rapport de prendre l'exemple de la reconnaissance de vêtements. Nous avons une liste de catégorie (écharpe, blouson, pantalon, chaussure..) et le but est de savoir à quelle catégorie appartient un vêtement. On assigne à chaque sortie une catégorie. Si l'on veut faire deviner une écharpe alors toutes les sorties devront prendre la valeur $0$ sauf la sortie correspondant aux écharpes qui devra être à $1$. Maintenant que nous connaissons les sorties attendues, l'algorithme pourra calculer la valeur de la fonction erreur et tenter de la minimiser. Après plusieurs itérations on obtiendra alors une probabilité pour chaque catégorie, en espérant que la sortie associée à "écharpes" soit proche de 1 et supérieure à toutes les autres.\\
+	
+	Pour coder l'algorithme en python, nous avons fait appel à la bibliothèque mathématique \hyperref{tensorflow}{https://www.tensorflow.org/}. Le code est le suivant :
+	\begin{minted}[linenos, autogobble, breaklines]{python}
+	from __future__ import absolute_import, division, print_function
+	
+	import tensorflow as tf
+	from tensorflow import keras
+	
+	import numpy as np
+	import matplotlib.pyplot as plt
+	
+	def plot_image(i, predictions_array, true_label, img):
+	predictions_array, true_label, img = predictions_array[i], true_label[i], img[i]
+	plt.grid(False)
+	plt.xticks([])
+	plt.yticks([])
+	
+	plt.imshow(img, cmap=plt.cm.binary)
+	
+	predicted_label = np.argmax(predictions_array)
+	if predicted_label == true_label:
+	color = 'blue'
+	else:
+	color = 'red'
+	
+	plt.xlabel("{} {:2.0f}% ({})".format(class_names[predicted_label],
+	100 * np.max(predictions_array),
+	class_names[true_label]),
+	color=color)
+	
+	
+	def plot_value_array(i, predictions_array, true_label):
+	predictions_array, true_label = predictions_array[i], true_label[i]
+	plt.grid(False)
+	plt.xticks([])
+	plt.yticks([])
+	thisplot = plt.bar(range(10), predictions_array, color="#777777")
+	plt.ylim([0, 1])
+	predicted_label = np.argmax(predictions_array)
+	
+	thisplot[predicted_label].set_color('red')
+	thisplot[true_label].set_color('blue')
+	
+	
+	print(tf.__version__)
+	
+	fashion_mnist = keras.datasets.fashion_mnist
+	
+	(train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
+	
+	class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
+	'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
+	
+	train_images = train_images / 255.0
+	
+	test_images = test_images / 255.0
+	
+	plt.figure()
+	plt.imshow(train_images[10])
+	plt.colorbar()
+	plt.grid(False)
+	plt.show()
+	
+	plt.figure(figsize=(10, 10))
+	for i in range(25):
+	plt.subplot(5, 5, i + 1)
+	plt.xticks([])
+	plt.yticks([])
+	plt.grid(False)
+	plt.imshow(train_images[i], cmap=plt.cm.binary)
+	plt.xlabel(class_names[train_labels[i]])
+	plt.show()
+	
+	model = keras.Sequential([
+	keras.layers.Flatten(input_shape=(28, 28)),
+	keras.layers.Dense(128, activation=tf.nn.relu),
+	keras.layers.Dense(10, activation=tf.nn.softmax)
+	])
+	
+	model.compile(optimizer='adam',
+	loss='sparse_categorical_crossentropy',
+	metrics=['accuracy'])
+	
+	model.fit(train_images, train_labels, epochs=5)
+	
+	test_loss, test_acc = model.evaluate(test_images, test_labels)
+	
+	print('Test accuracy:', test_acc)
+	predictions = model.predict(test_images)
+	
+	num_rows = 5
+	num_cols = 3
+	num_images = num_rows * num_cols
+	plt.figure(figsize=(2 * 2 * num_cols, 2 * num_rows))
+	for i in range(num_images):
+	plt.subplot(num_rows, 2 * num_cols, 2 * i + 1)
+	plot_image(i, predictions, test_labels, test_images)
+	plt.subplot(num_rows, 2 * num_cols, 2 * i + 2)
+	plot_value_array(i, predictions, test_labels)
+	
+	plt.show()
+	\end{minted}
+	
+	
