@@ -16,11 +16,47 @@ L'intelligence artificielle représente un ensemble de théories et techniques d
 	
 \section{Architecture d'un réseau de neurones}
 
-\begin{figure}[H]
-	\centering
-	\includegraphics[width=0.75\linewidth]{images/reseau}
-	\caption{Architecture}
-\end{figure}
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\linewidth]{images/reseau}
+		\caption{Architecture d'un réseau de neurones}
+	\end{figure}
+
+	Les réseaux de neurones sont formés de plusieurs couches successives, comme on peut le voir sur l'image ci-dessus. Sur ce schéma, les n\oe uds représentent les neurones tandis que les fléches illustrent les "poids". La première couche (en jaune) est la couche d'entrée, elle contient les informations à "traiter". Tout au bout de la chaîne on a une couche de sortie, elle est ici composée d'un seul neurone mais il peut y en avoir plusieurs. Entre les entrées et sorties, on trouve des couches dites "cachées". C'est là que se font tous les calculs. Zoomons maintenant sur un neurone : \\
+	
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=.75\linewidth]{images/neurone}
+		\caption{Neurone détaillé}
+	\end{figure}
+	
+	Chaque neurone prend une valeur entre 0 et 1, déterminée par ce qu'il reçoit en entrée et par une fonction d'activation. On voit, à gauche de l'image, des valeurs $x_1, x_2,x x_3, ..., x_n$. Ce sont les valeurs déduites de la couche précédente. Les poids, notés ici $w$ représentent l'impact qu'ont ces valeurs sur le neurone. Vient ensuite la fonction d'activation. Son rôle est "d'écraser" la valeur de la somme pondérée ($\sum_{k=0}^{N}x_kw_{k}$) pour qu'elle appartienne à un intervalle voulu. On la notera $\varphi$.\\
+	
+	Avant de commencer la partie mathématique suivante, voici un récapitulatif des indices et exposants utilisés dans les équations ci-dessous : \\
+	$$
+	\begin{cases}
+		L : \text{numéro de couche, la couche d'entrée est $L = 1$}\\
+		k : \text{numéro du neurone de la couche d'entrée}\\
+		K : \text{nombre de neurones de la couche d'entrée (si on ne compte pas le biais noté $x_0$)}\\
+		n : \text{numéro du neurone de la couche $L$}\\
+		N : \text{nombre de neurones de la couche $L$ (si on ne compte pas le biais noté $a_0^{(L)}$)}\\
+		m : \text{numéro du neurone de la couche $L-1$}\\
+		M : \text{nombre de neurones de la couche $L-1$ (si on ne compte pas le biais noté $a_0^{(L-1)}$)}
+	\end{cases}
+	$$
+	
+	On peut donc écrire que la valeur du premier neurone de la première couche cachée est : 
+	$$a_1^{(2)} = \varphi\left(\sum_{k=0}^{K}x_kw_{k1}^{(1)}\right)$$
+	On peut le généraliser au $n^{\text{ème}}$ neurone de cette couche :
+	$$a_n^{(2)} = \varphi\left(\sum_{k=0}^{K}x_kw_{kn}^{(1)}\right)$$
+	
+	\noindent Si l'on passe à la couche suivante, le premier neurone celle-ci s'écrit comme la somme pondérée des valeurs des neurones de la couche précédentes multipliées par leur poids sur ce neurone : 
+	$$a_1^{(3)}  = \varphi\left(\sum_{i=0}^{N}a_i^{(2)}w_{i1}^{(2)}\right)$$
+	C'est donc une somme de sommes et pour le $n^{\text{ème}}$ neurone de la 2\ieme{} couche cachée, elle vaut :
+	$$a_n^{(3)} = \varphi\left(\sum_{i=0}^{N}\varphi\left(\sum_{k=0}^{K}x_kw_{kn}^{(1)}\right)a_i w_{i1}^{(2)}\right)$$
+	
+	\noindent Finalement, pour n'importe quel neurone,on a :
+	$$ a_n^{(L)} = \varphi\left(\sum_{m=0}^{M}\left[...\left[\varphi\left(\sum_{i=0}^{N}\varPhi\left(\sum_{k=0}^{K}x_kw_{kn}^{(1)}\right)w_{in}^{(2)}\right)\right]...\right]w_{nm}^{(L)}\right) $$
 	
 	
 \section{Application des algorithmes}
