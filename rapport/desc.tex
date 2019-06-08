@@ -176,11 +176,11 @@ L'algorithme GMRES repose sur une méthode de projection. On écrit donc le syst
 \end{equation}
 Le but est maintenant de construire des solutions par itérations. On se place dans un sous-espace $\K$ et on essaie de trouver dans ce sous-espace $x$ tel que : 
 \begin{equation}
-b - Ax \perp \K \Rightarrow <Au, v> = <b, v>, v \in \mathbb{K}
+b - Ax \perp \K \Rightarrow <Au, v>\ =\ <b, v>, v \in \mathbb{K}
 \end{equation}
 On généralise cette méthode grâce à deux sous-espaces : $\K$ et  $\mathbb{L}$. On cherche $x \in u_0 + \K$ avec :
 \begin{equation}
-b - Ax \perp \mathbb{L} \Rightarrow \ <Au, v> = <b, v>, v \in \mathbb{L}
+b - Ax \perp \mathbb{L} \Rightarrow \ <Au, v>\ =\ <b, v>, v \in \mathbb{L}
 \label{Petrov-Galerkin}
 \end{equation}
 C'est la condition de Petrov-Galerkin.
@@ -321,7 +321,7 @@ Définissons ensuite le vecteur direction :
 \begin{equation}
 d_k = x_{k+1} - x_k
 \end{equation}
-De part la construction de d, il  est possible de déduire quelques propriétés : 
+De part la construction de $d$, il  est possible de déduire quelques propriétés : 
 \begin{itemize}
 	\item L'espace de de Krylov est une combinaison linéaire des vecteurs $r_k$ et $d_k$
 	\begin{equation}
@@ -339,7 +339,7 @@ De part la construction de d, il  est possible de déduire quelques propriétés
 C'est grâce à cette dernière propriété que le gradient conjugué est appelé ainsi.
 \subsection{Propriétés de l'implémentation du gradient conjugué}
 
-Le gradient conjugué est aujourd'hui très utilisé dans différents domaines car c'est un algorithmes possédants des propriétés très intéressantes. La première d'entre-elles concerne le calcul des vecteurs de direction. En effet, nous avons vu plus haut, lors de la construction de la méthode, que chaque vecteur est un conjugué de chacun des vecteurs précédents. C'est un propriété important lors de l'implémentation logiciel de la technique puisque pour calculer le vecteur $d_k$ nous n'avons besoin que de $d_{k-1}$. \\
+Le gradient conjugué est aujourd'hui très utilisé dans différents domaines car c'est un algorithme possédants des propriétés très intéressantes. La première d'entre-elles concerne le calcul des vecteurs de direction. En effet, nous avons vu plus haut, lors de la construction de la méthode, que chaque vecteur est un conjugué de chacun des vecteurs précédents. C'est un propriété importante lors de l'implémentation logicielle de la technique puisque pour calculer le vecteur $d_k$ nous n'avons besoin que de $d_{k-1}$. \\
 
 Pour toutes méthodes numériques, il nous est important de montrer son utilité en étudiant la convergence : une méthode qui diverge est inutilisable et une méthode qui converge très lentement n'est guère plus utile. C'est pour cela que dans la suite de cette partie nous nous intéressons aux taux de convergence de notre gradient conjugué.
 
@@ -360,7 +360,7 @@ Ce qui simplifie l'expressions de $x_{k+1}$ en :
 x_{k+1} = x_0 + P_(A)r_0
 \end{equation}
 
-En utilisant la norme définit par le produit scalaire avec la matrice A, nous avons : 
+En utilisant la norme définie par le produit scalaire avec la matrice A, nous avons : 
 \begin{eqnarray}
 \frac{1}{2} ||x - x*||^2_A &=& \frac{1}{2}(x - x^*)^TA(x - x^*)\\
 &=& \frac{1}{2} (x^TAx + {x^*}^TAx^* - x^TAx^* - {x^*}^TAx)
@@ -374,7 +374,7 @@ avec $f(x) = \frac{1}{2}x^TAx - b^Tx$
 \begin{equation}
 \min_{P_k} ||x_0 + P_k(A)r_0 - x^*||_A
 \end{equation}
-En introduisant cette minimisation dans l'expression du résidue et le fait que $r_0 = A(x_0 - x^*)$, il vient : 
+En introduisant cette minimisation dans l'expression du résidu et le fait que $r_0 = A(x_0 - x^*)$, il vient : 
 \begin{equation}
 x_{k+1} - x^* = x_0 + P_k^*(A)r_0 - x^* = [I + P_k^*(A)A](x_0 - x^*)
 \end{equation}
@@ -400,9 +400,9 @@ Ce qui nous permet d'écrire :
 \begin{equation}
 ||x_{k+1} - x^*||^2_A = min_{P_k} \sum_{i = 1}^{n} \lambda_i[1 + \lambda_iP_k(\lambda_i)]^2\xi^2
 \end{equation}
-Le minimum apparaît du fait que le polynôme généré est optimal au regard de la minimisation réalisé dans l'espace de Krylov (Propriété non démontrée ici).
+Le minimum apparaît du fait que le polynôme généré est optimal au regard de la minimisation réalisée dans l'espace de Krylov (Propriété non démontrée ici).
 
-Nous avons donc exprimé la converge de notre algoritme. Le taux de convergence du gradient conjugué est donné par : 
+Nous avons donc exprimé la convergence de notre algoritme. Le taux de convergence du gradient conjugué est donné par : 
 \begin{equation}
 \min_{P_k}max_{i \leq i \leq n} [1 + \lambda_iP_k(\lambda_i)]^2
 \end{equation}
@@ -462,9 +462,9 @@ def gradient_conjugue(A, b, x0, tol, i_max):
 \end{minted}
 
 \subsection{Quelques mots sur le gradient conjugué non-linéaire}
-Le but est ici de voir si l'on peut améliorer l'algorithme ci-dessus pour l'appliquer à des fonctions quadratiques non convexes voir non linéaires. Nous n'allons présenter ici que la méthode de Fletcher-Reeves. Cette méthode consiste en deux petits changement dans l'algorithme du CG. \\
+Le but est ici de voir si l'on peut améliorer l'algorithme ci-dessus pour l'appliquer à des fonctions quadratiques non convexes voir non linéaires. Nous n'allons présenter ici que la méthode de Fletcher-Reeves. Cette méthode consiste en deux petits changement dans l'algorithme du gradient conjugué. \\
 
-La première modification consiste à changer le calcul du pas de descente. En effet, comme nous ne sommes plus dans le cas quadratique, il est beaucoup moins facile de trouver le pas de descente. Afin de trouver ce pas optimal, il nous faut minimiser la fonction partielle dans la direction $p_k$. De plus, le résidue qui était jusqu'à lors le gradient de la fonction quadratique devient ici le gradient de la fonction non-linéaire. Cette partie n'étant qu'une ouverture à l'étude non-linéaire, nous allons uniquement détailler sommairement comment choisir le nouvel $\alpha$ et présenter un algorithme. 
+La première modification consiste à changer le calcul du pas de descente. En effet, comme nous ne sommes plus dans le cas quadratique, il est beaucoup moins facile de trouver le pas de descente. Afin de trouver ce pas optimal, il nous faut minimiser la fonction partielle dans la direction $p_k$. De plus, le résidu qui était jusqu'alors le gradient de la fonction quadratique devient ici le gradient de la fonction non-linéaire. Cette partie n'étant qu'une ouverture à l'étude non-linéaire, nous allons uniquement détailler sommairement comment choisir le nouvel $\alpha$ et présenter un algorithme. 
 
 Voici l'algorithme de Fletcher-Reeves : 
 
@@ -494,12 +494,12 @@ f(x_k + \alpha_kp_k) \leq f(x_k) + c_1\alpha_k \nabla f_k^Tp_k
 |\nabla f(x_k + \alpha_kp_k)^T p_k| \leq -c_2 \nabla f_k^Tp_k, 0 < c_1 < c_2 < \frac{1}{2}
 \end{equation}
 
-Si l'on prends $\alpha$ satisfaisant cela, alors nous savons que les directions de descentes vérifient : 
+Si l'on prends $\alpha$ satisfaisant cela, alors nous savons que les directions de descente vérifient : 
 \begin{equation}
 -\frac{1}{1 - c_2}\leq \frac{\nabla f_k^Tp_k}{||\nabla f_k||^2} \leq \frac{2c_2 - 1}{1 - c_2}
 \end{equation}
 
-Ceci permet d'assurer que les valeurs $p_k$ est une direction de descente (Démonstration non-réalisée car longue et compliquée).
+Ceci permet d'assurer que les valeurs $p_k$ sont des directions de descente (Démonstration non-réalisée car longue et compliquée	).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 				ALGO DE TYPE NEWTON
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
