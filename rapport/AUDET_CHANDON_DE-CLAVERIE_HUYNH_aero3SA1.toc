@@ -1,0 +1,35 @@
+\babel@toc {french}{}
+\contentsline {chapter}{\numberline {1}Introduction}{1}{chapter.1}
+\contentsline {chapter}{\numberline {2}D\IeC {\'e}veloppement th\IeC {\'e}orique des m\IeC {\'e}thodes de descente}{2}{chapter.2}
+\contentsline {section}{\numberline {2.1}Retour sur les m\IeC {\'e}thodes de descente}{2}{section.2.1}
+\contentsline {subsection}{\numberline {2.1.1}Motivation de l'\IeC {\'e}tude et de l'int\IeC {\'e}r\IeC {\^e}t}{2}{subsection.2.1.1}
+\contentsline {subsection}{\numberline {2.1.2}Encadrement du probl\IeC {\`e}me}{2}{subsection.2.1.2}
+\contentsline {subsection}{\numberline {2.1.3}Int\IeC {\'e}r\IeC {\^e}t d'une fonction $\mathrsfs {C}^2$ sur $\mathbb {R}^n$}{3}{subsection.2.1.3}
+\contentsline {subsection}{\numberline {2.1.4}Les m\IeC {\'e}thodes de gradient}{3}{subsection.2.1.4}
+\contentsline {subsubsection}{Principes}{3}{section*.3}
+\contentsline {subsubsection}{M\IeC {\'e}thode du gradient \IeC {\`a} pas fixe}{4}{section*.4}
+\contentsline {subsubsection}{M\IeC {\'e}thode du gradient \IeC {\`a} pas optimal}{4}{section*.5}
+\contentsline {subsubsection}{M\IeC {\'e}thode du gradient conjugu\IeC {\'e}}{5}{section*.6}
+\contentsline {section}{\numberline {2.2}Introduction aux espaces de Krylov}{5}{section.2.2}
+\contentsline {subsection}{\numberline {2.2.1}D\IeC {\'e}finition des espaces de Krylov}{5}{subsection.2.2.1}
+\contentsline {subsection}{\numberline {2.2.2}Quelques propri\IeC {\'e}t\IeC {\'e}s}{6}{subsection.2.2.2}
+\contentsline {subsection}{\numberline {2.2.3}Un premier algorithme : GMRES}{7}{subsection.2.2.3}
+\contentsline {subsubsection}{G\IeC {\'e}n\IeC {\'e}ralit\IeC {\'e}}{7}{section*.7}
+\contentsline {subsubsection}{Explication de l'algorithme GMRES}{9}{section*.8}
+\contentsline {section}{\numberline {2.3}L'approche par les espaces de Krylov du gradient conjugu\IeC {\'e}}{11}{section.2.3}
+\contentsline {subsection}{\numberline {2.3.1}D\IeC {\'e}finition du gradient conjugu\IeC {\'e}}{11}{subsection.2.3.1}
+\contentsline {subsection}{\numberline {2.3.2}Propri\IeC {\'e}t\IeC {\'e}s de l'impl\IeC {\'e}mentation du gradient conjugu\IeC {\'e}}{12}{subsection.2.3.2}
+\contentsline {subsection}{\numberline {2.3.3}Algorithme du gradient conjugu\IeC {\'e}}{14}{subsection.2.3.3}
+\contentsline {subsection}{\numberline {2.3.4}Quelques mots sur le gradient conjugu\IeC {\'e} non-lin\IeC {\'e}aire}{16}{subsection.2.3.4}
+\contentsline {section}{\numberline {2.4}D'autres algorithmes de minimisation}{17}{section.2.4}
+\contentsline {subsection}{\numberline {2.4.1}Les algorithmes de Newton}{17}{subsection.2.4.1}
+\contentsline {subsection}{\numberline {2.4.2}Les algorithmes de Quasi-Newton}{18}{subsection.2.4.2}
+\contentsline {chapter}{\numberline {3}Applications des m\IeC {\'e}thodes de descente au deep learning}{20}{chapter.3}
+\contentsline {section}{\numberline {3.1}Introduction et Motivation}{20}{section.3.1}
+\contentsline {subsection}{\numberline {3.1.1}Intelligence artificielle, machine learning et deep learning}{20}{subsection.3.1.1}
+\contentsline {section}{\numberline {3.2}Architecture d'un r\IeC {\'e}seau de neurones}{22}{section.3.2}
+\contentsline {subsection}{\numberline {3.2.1}D\IeC {\'e}tail d'un neurone}{22}{subsection.3.2.1}
+\contentsline {subsection}{\numberline {3.2.2}Fonction d'activation}{24}{subsection.3.2.2}
+\contentsline {subsection}{\numberline {3.2.3}Fonction erreur}{24}{subsection.3.2.3}
+\contentsline {section}{\numberline {3.3}Application des algorithmes}{25}{section.3.3}
+\contentsline {chapter}{\numberline {4}Conclusion}{29}{chapter.4}
