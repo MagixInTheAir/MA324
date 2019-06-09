@@ -5,16 +5,16 @@ Le but de ce rapport est d'étudier les différentes possibilités afin de minim
 \argmin_x f(x)
 \end{equation}
 
-Nous utiliserons des méthodes de descente afin de résoudre ce type de problème mais avant tout, il est nécessaire de définir l'intérêt de résoudre un tel type de problème puis de l'encadrer.
+Nous utiliserons des méthodes de descente afin de résoudre ce type de problèmes mais avant tout, il est nécessaire de définir l'intérêt de leur résolution, puis de l'encadrer.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 				METHODES DE DESCENTES
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Retour sur les méthodes de descente}
 \subsection{Motivation de l'étude et de l'intérêt}
-Lorsque nous traitons d'optimisation, la fonction dont nous cherchons généralement l'$\argmin$, est une fonction objectif. Ces fonctions à minimiser sont présentes dans de nombreux domaines très différents dont l'économie, la mécanique, la production industrielle ou dans la gestion de flux et de réseaux. Les applications sont nombreuses. Il est donc important de pouvoir trouver des méthodes efficaces de résolution de ce problème général. 
+Lorsque nous traitons d'optimisation, la fonction dont nous cherchons généralement l'$\argmin$, est une fonction objectif. Ces fonctions à minimiser sont présentes dans de nombreux domaines très différents dont l'économie, la mécanique, la production industrielle, ou encore la gestion de flux et de réseaux. Les applications sont nombreuses. Il est donc important de trouver des méthodes efficaces de résolution de ce problème général. 
 \subsection{Encadrement du problème}
-On cherche donc l'argument $x$ tel que $f(x)$ soit minimal, $f$ étant une fonction deux fois différentiable sur $\mathbb{R}^n$. On se donne deux conditions essentielles car sans celles-ci, l'étude devient beaucoup plus complexe. \\
+On cherche donc l'argument $x$ tel que $f(x)$ soit minimal, $f$ étant une fonction deux fois différentiable sur $\mathbb{R}^n$. On se donne deux conditions essentielles sans lesquelles l'étude devient beaucoup plus complexe. \\
 
 On pose donc que la fonction $f$ que l'on cherche à minimiser est une fonction strictement convexe afin d'utiliser les outils de l'analyse convexe. De plus, on suppose que $f$ est coercive sur l'ensemble d'étude $R^n$. Mathématiquement, ces deux conditions se traduisent par :
 $$
@@ -27,7 +27,7 @@ $$
 \lim\limits_{|x|\rightarrow +\infty}f(x)=+\infty
 $$
 
-La coercivité permet d'assurer l'existence d'une solution et la stricte convexité de limiter le nombre de solution à une, au plus. En posant ces deux conditions, notre problème d'optimisation aura une solution unique que l'on notera $x^*$.
+La coercivité permet d'assurer l'existence d'une solution et la stricte convexité de limiter le nombre de solutions à une, au plus. En posant ces deux conditions, notre problème d'optimisation aura une solution unique que l'on notera $x^*$.
 
 \subsection{Intérêt d'une fonction $\mathcal{C}^2$ sur $\mathbb{R}^n$}
 Dans ce mémoire nous nous intéressons uniquement aux fonctions objectif qui sont deux fois différentiables sur $\mathbb{R}^n$ et de classe $\mathcal{C}^2$. \\
@@ -35,17 +35,17 @@ Dans ce mémoire nous nous intéressons uniquement aux fonctions objectif qui so
 Cela a son importance puisque dans bon nombre de cas, nous effectuerons un développement limité sur la fonction $f$, localement, afin d'obtenir une forme quadratique plus un reste qui dépendra du choix que nous effectuerons (Reste de Young, reste intégral ou reste de Taylor-McLaurin). \\
 
 Notre problème d'optimisation différentiable se rapprochera donc d'un problème de minimisation quadratique et nous pourrons ainsi trouver un minimiseur local qui, dans le cadre d'une fonction strictement convexe et coercive, sera le minimum global unique recherché.
-\subsection{Les méthodes de gradients}
-Les méthodes de gradients sont des méthodes de descentes basées sur la connaissance du gradient de la fonction objectif. Nous verrons trois méthodes de descente de gradient classiques qui sont :
+\subsection{Les méthodes de gradient}
+Les méthodes de gradient sont des méthodes de descente basées sur la connaissance du gradient de la fonction objectif. Nous verrons trois méthodes de descente de gradient classiques qui sont :
 \begin{enumerate}
 	\item Le gradient à pas fixe
 	\item Le gradient à pas optimal
 	\item Le gradient conjugué
 \end{enumerate}
 \subsubsection{Principes}
-L'idée derrière ces méthodes est de trouver $\argmin_x f(x)$ à partir d'un point initial puis d'en choisir une direction et un pas de descente. L'efficacité de l'algorithme sera grandement influencée par le pas de descente. Le choix de ce paramètre donne naissance aux trois méthodes que nous étudions.
+L'idée derrière ces méthodes est de trouver $\underset{x}{\argmin}f(x)$ à partir d'un point initial puis d'en choisir une direction et un pas de descente. L'efficacité de l'algorithme sera grandement influencée par le pas de descente. Le choix de ce paramètre donne naissance aux trois méthodes que nous étudions.
 \subsubsection{Méthode du gradient à pas fixe}
-La méthode du gradient à pas fixe est la plus simple à mettre en place. Cependant, elle peut être dangereuse puisque l'on peut se dire qu'un pas très grand permettra d'atteindre la solution recherchée plus rapidement. Cela induit en erreur puisque dans un tel cas (grand pas), il est possible d'osciller autour de la solution sans jamais l'atteindre à un seuil de précision convenable. L'algorithme est le suivant :
+La méthode du gradient à pas fixe est la plus simple à mettre en place. Cependant, elle peut être risquée puisque l'on peut se dire qu'un pas très grand permettra d'atteindre la solution recherchée plus rapidement. Cela induit en erreur puisque dans un tel cas il est possible d'osciller autour de la solution sans jamais l'atteindre à un seuil de précision convenable. L'algorithme est le suivant :
 \begin{algorithm}
 	\caption{Méthode du gradient à pas fixe}
 	\begin{algorithmic}[1]
@@ -60,7 +60,7 @@ La méthode du gradient à pas fixe est la plus simple à mettre en place. Cepen
 	\end{algorithmic}
 \end{algorithm}
 \subsubsection{Méthode du gradient à pas optimal}
-Une manière d'améliorer les performances de l'algorithme serait d'y faire une recherche de pas optimal à chaque itération.
+Une manière d'améliorer les performances de l'algorithme serait d'y ajouter une recherche de pas optimal à chaque itération.
 \begin{algorithm}[H]
 	\caption{Méthode du gradient à pas  optimal}
 	\begin{algorithmic}[1]
@@ -90,22 +90,22 @@ L'algorithme de recherche du pas est :
 		\end{algorithmic}
 	\end{algorithm}
 \subsubsection{Méthode du gradient conjugué}
-La méthode du gradient conjugué est la version la plus élaborée de ces trois méthodes de descentes du gradient. Ainsi, nous l'étudierons plus en détail et la justifierons dans la partie suivante grâce aux espaces de Krylov.
+La méthode du gradient conjugué est la version la plus élaborée de ces trois méthodes de descente du gradient. Ainsi, nous l'étudierons plus en détails et la justifierons dans la partie suivante grâce aux espaces de Krylov.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 				KRYLOV
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Introduction aux espaces de Krylov}
 Dans cette partie, nous allons introduire un outil mathématique important qui permet la justification de la méthode du gradient conjugué : les espaces de Krylov. 
 \subsection{Définition des espaces de Krylov}
-Afin d'introduire les espaces de Krylov, nous allons prendre un exemple simple : celui d'un système linéaire. On cherche donc x qui vérifie l'équation : 
+Afin d'introduire les espaces de Krylov, nous allons prendre un exemple simple : celui d'un système linéaire. On cherche donc $x$ qui vérifie l'équation : 
 \begin{equation}
 Ax = b
 \end{equation}
-On définit le vecteur résidu à l'itération k comme étant : 
+On définit le vecteur résidu à l'itération $k$ comme étant : 
 \begin{equation}
 r^k \triangleq b - Ax^k = -A ( - A^{-1}b + x^k) = -A (- x^* + x^k)
 \end{equation}
-Où $x^*$ est la solution réelle du système. Alors, nous pouvons écrire la solution au rang k+1, comme celle au rang k plus le résidu : 
+Où $x^*$ est la solution réelle du système. Alors, nous pouvons écrire la solution au rang $k+1$, comme celle au rang $k$ plus le résidu : 
 \begin{eqnarray}
 x^{k+1} &=& x^k + r^k\\
 \Leftrightarrow x^{k+1} - x^* &=& x^k - x^* + r^k\\
@@ -124,7 +124,7 @@ Donc il vient que :
 \begin{equation}
 x^k \in x^0 + Vect\{r^0, Ar^0, ..., A^kr^0\}
 \end{equation}
-Où $Vect\{r^0, Ar^0, ..., A^kr^0\}$ est le k-ième espace de Krylov généré par A à partir de $r^0$ noté $\mathcal{K}_k(A, r^0)$
+Où $Vect\{r^0, Ar^0, ..., A^kr^0\}$ est le k-ième espace de Krylov généré par $A$ à partir de $r^0$ noté $\mathcal{K}_k(A, r^0)$
 \subsection{Quelques propriétés}
 Maintenant que nous avons une définition de ces espaces, nous allons montrer plusieurs propriétés pour ensuite construire l'algorithme et l'implémenter. Le premier fait remarquable des espaces de Krylov est que par construction, nous avons :  
 \begin{equation}
@@ -134,11 +134,11 @@ Ensuite, il est important de montrer que la solution que l'on cherche appartient
 \begin{equation}
 Ax = b \label{pb}
 \end{equation}
-D'après la définition du problème, la matrice A est inversible. Nous supposons que l'on a le polynôme caractéristique de A :
+D'après la définition du problème, la matrice $A$ est inversible. Nous supposons que l'on a le polynôme caractéristique de $A$ :
 \begin{equation}
 P(\lambda) = \sum_{j = 0}^{n} \alpha_j t^j \Rightarrow P(0) = \alpha_0 = det(A) \neq 0
 \end{equation}
-Par le théorème de Cayley-Hamilton\footnote{\url{http://www.logique.jussieu.fr/~alp/Cayley_Hamilton.pdf}}, nous pouvons obtenir la valeur de $A^{-1}$ :
+Par le théorème de Cayley-Hamilton\footnote{\url{http://www.logique.jussieu.fr/\~alp/Cayley\_Hamilton.pdf}}, nous pouvons obtenir la valeur de $A^{-1}$ :
 \begin{eqnarray}
 P(A) = \alpha_0 I + \alpha_1 A + ... + \alpha_n A^n &=& 0 \\
 \alpha_0 A^{-1}A + \alpha_1 A + ... + \alpha_n A^n &=& 0 \\
@@ -158,7 +158,7 @@ Ce vecteur appartient clairement à l'espace de Krylov défini par :
 x^* \in \mathcal{K}(A, b)
 \end{equation}
 \subsection{Un premier algorithme : GMRES}
-Un des algorithmes utilisant les espaces de Krylov est l'algorithme GMRES qui se trouve ci-dessous en python. Cette méthode repose sur les espaces de Krylov. En effet, dans cet algorithme nous choisissons $x_k \in \mathcal{K}_k(A, b)$ tel que l'on a $||b - Ax_k||_2$ qui est minimal. Nous nous reposons sur une méthode de projection. L'algorithme utilise aussi sur le procédé d'Arnoldi\footnote{\url{https://docplayer.fr/215470-Calcul-matriciel-et-systemes-lineaires.html} (page 36)} qui nous permet de créer une base orthonormée sur le sous-espace de Krylov. Dans la suite de ce chapitre, nous allons étudier ces composantes permettant d'arriver à l'écriture de notre algorithme.
+Un des algorithmes utilisant les espaces de Krylov est l'algorithme GMRES qui se trouve ci-dessous en python. Cette méthode repose sur les espaces de Krylov. En effet, dans cet algorithme nous choisissons $x_k \in \mathcal{K}_k(A, b)$ tel que l'on a $||b - Ax_k||_2$ qui est minimal. Nous nous reposons sur une méthode de projection. L'algorithme utilise aussi le procédé d'Arnoldi\footnote{\url{https://docplayer.fr/215470-Calcul-matriciel-et-systemes-lineaires.html} (page 36)} qui nous permet de créer une base orthonormée sur le sous-espace de Krylov. Dans la suite de ce chapitre, nous allons étudier ces composantes permettant d'arriver à l'écriture de notre algorithme.
 
 \subsubsection{Généralité}
 Nous avons le système linéaire suivant qui possède une unique solution $x^*$ : 
@@ -185,7 +185,7 @@ b - Ax \perp \mathbb{L} \Rightarrow \ <Au, v>\ =\ <b, v>, v \in \mathbb{L}
 \end{equation}
 C'est la condition de Petrov-Galerkin.
 
-Sous la forme matricielle, nous allons créer deux matrices V et W, de taille $n \times m$,  définies par les vecteurs des bases de $\K$ et $\mathbb{L}$ : 
+Sous la forme matricielle, nous allons créer deux matrices $V$ et $W$, de taille $n \times m$,  définies par les vecteurs des bases de $\K$ et $\mathbb{L}$ : 
 \begin{eqnarray}
 V &=& (V_1 \ V_2 \ ... \ V_m ) \\
 W &=& (W_1 \ W_2 \ ... \ W_m )
@@ -206,10 +206,10 @@ Nous obtenons donc la solution :
 \begin{equation}
 x = x_0 + V (W^t A V)^{-1} W^tr^0
 \end{equation}
-Nous pouvons donc maintenant expliquer ce que notre méthode de projection va faire. Il faut savoir qu'une méthode de projection est itérative et va à chaque itération faire deux choses  :
+Nous pouvons maintenant expliquer ce que notre méthode de projection va faire. Il faut savoir qu'une méthode de projection est itérative et fait, à chaque itération, deux choses  :
 \begin{itemize}
-	\item construire les sous-espaces K et L
-	\item chercher la nouvelle itération dans $u + K$ par le procédé exposé ci-dessus.
+	\item construire les sous-espaces $\K$ et $\mathbb{L}$,
+	\item chercher la nouvelle itération dans $u + \K$ par le procédé exposé ci-dessus.
 \end{itemize}
 Voici donc le principe général des méthodes de projection : 
 \begin{enumerate}
@@ -219,12 +219,12 @@ Voici donc le principe général des méthodes de projection :
 	\item Résoudre le système $y = (W^t_m A V_m)^{-1} W^t_mr$
 	\item Créer la nouvelle solution : $x = x + V_m y$
 \end{enumerate}
-Pour créer le sous-espace L, il y a deux méthodes : 
+Pour créer le sous-espace $\mathbb{L}$, il y a deux méthodes : 
 \begin{itemize}
-	\item $L = K$ donne lieu à la méthode du gradient conjugué (expliqué ci-dessous)
-	\item $L = AK$ donne lieu à la méthode GMRES.
+	\item $\mathbb{L} = \K$ donne lieu à la méthode du gradient conjugué (expliqué ci-dessous)
+	\item $\mathbb{L} = A\K$ donne lieu à la méthode GMRES.
 \end{itemize}
-La méthode du gradient conjugué ayant été vue en cours, nous avons choisi la deuxième méthode de génération de L. Dans les deux cas cela revient à résoudre le problème des moindres carrés : 
+La méthode du gradient conjugué ayant été vue en cours, nous avons choisi la deuxième méthode de génération de $\mathbb{L}$. Dans les deux cas cela revient à résoudre le problème des moindres carrés : 
 \begin{equation}
 \begin{cases}
 \text{On cherche $x^{(k)} \in x_0 + \K_m$ tel que : }\\
@@ -303,9 +303,9 @@ Grâce aux espaces de krylov, nous sommes capable d'améliorer les algorithmes d
 	x_{k+1} = x_k + \alpha_k (b - Ax_k)
 \end{cases}
 \end{equation}
-Nous définissons alors le vecteur résidu $r_k = b - Ax_k$ appartenant à l'espace de Krylov d'ordre k et définit par le résidu à l'origine : $r_0$. De ce fait, il vient que $x_{k+1}$ appartient à l'espace affine composé par le point $x_0$ et le k\up{ieme} espace de krylov : $\mathcal{K}_k$. Afin de simplifier notre exposé, nous supposons que nous avons affaire à des matrices symétriques définies positives. \\
+Nous définissons alors le vecteur résidu $r_k = b - Ax_k$ appartenant à l'espace de Krylov d'ordre k et défini par le résidu à l'origine : $r_0$. De ce fait, il vient que $x_{k+1}$ appartient à l'espace affine composé par le point $x_0$ et le k\up{ieme} espace de Krylov : $\mathcal{K}_k$. Afin de simplifier notre exposé, nous supposons que nous avons affaire à des matrices symétriques définies positives. \\
 
-Dans la méthode du gradient conjugué, nous n'allons pas choisir la définition comme dans les autres méthodes de gradient mais nous avons d'autres critères qui sont plus intéressant : 
+Dans la méthode du gradient conjugué, nous n'allons pas choisir la définition comme dans les autres méthodes de gradient mais nous avons d'autres critères qui sont plus intéressants : 
 \begin{itemize}
 	\item Le premier repose sur le principe d'orthogonalisation : 
 	\begin{equation}
@@ -316,7 +316,7 @@ Dans la méthode du gradient conjugué, nous n'allons pas choisir la définition
 		\exists x_{k+1} \in [x_0 + \mathcal{K}_k], \frac{1}{2}<Ax, x> - <b, x> \ \text{est minimal}
 	\end{equation}
 \end{itemize}
-Dans le cas d'une matrice symétrique définie positive, les deux choix ci-dessus donnent la même solution $x_{k+1}$ d'où le choix de A symétrique définie positive. \\
+Dans le cas d'une matrice symétrique définie positive, les deux choix ci-dessus donnent la même solution $x_{k+1}$ d'où le choix de $A$ symétrique définie positive. \\
 Définissons ensuite le vecteur direction : 
 \begin{equation}
 d_k = x_{k+1} - x_k
@@ -325,13 +325,13 @@ De part la construction de $d$, il  est possible de déduire quelques propriét�
 \begin{itemize}
 	\item L'espace de de Krylov est une combinaison linéaire des vecteurs $r_k$ et $d_k$
 	\begin{equation}
-	\mathcal{K}_k = vect{r_0, ..., r_k} = vect{d_0, ..., d_k}
+	\mathbb{K}_k = vect\{r_0, ..., r_k\} = vect\{d_0, ..., d_k\}
 	\end{equation}
 	\item Tous les vecteurs de la suite sont orthogonaux : 
 	\begin{equation}
 		\forall 0 \leq l < k \leq n - 1, <r_k, r_l> = 0
 	\end{equation}
-	\item Les vecteurs de la suite $(d_k)$ sont conjugué selon le produit vectoriel défini par A : 
+	\item Les vecteurs de la suite $(d_k)$ sont conjugués selon le produit vectoriel défini par $A$ : 
 	\begin{equation}
 		\forall 0 \leq l < k \leq n - 1, <Ad_k, d_l> = 0
 	\end{equation}
@@ -341,16 +341,17 @@ C'est grâce à cette dernière propriété que le gradient conjugué est appel�
 
 Le gradient conjugué est aujourd'hui très utilisé dans différents domaines car c'est un algorithme possédants des propriétés très intéressantes. La première d'entre-elles concerne le calcul des vecteurs de direction. En effet, nous avons vu plus haut, lors de la construction de la méthode, que chaque vecteur est un conjugué de chacun des vecteurs précédents. C'est un propriété importante lors de l'implémentation logicielle de la technique puisque pour calculer le vecteur $d_k$ nous n'avons besoin que de $d_{k-1}$. \\
 
-Pour toutes méthodes numériques, il nous est important de montrer son utilité en étudiant la convergence : une méthode qui diverge est inutilisable et une méthode qui converge très lentement n'est guère plus utile. C'est pour cela que dans la suite de cette partie nous nous intéressons aux taux de convergence de notre gradient conjugué.
+Pour toute méthode numérique, il nous est important de montrer son utilité en étudiant la convergence : une méthode qui diverge est inutilisable et une méthode qui converge très lentement n'est guère plus utile. C'est pour cela que dans la suite de cette partie nous nous intéressons aux taux de convergence de notre gradient conjugué.\\
 
-Tout d'abord, nous rappelons que le gradient conjugué converge en n itération au maximum. En effet, la solution de notre problème appartient à l'espace de Krylov dans lequel nous cherchons la solution. La convergence n'est donc pas un problème. Ce qui peut poser des problèmes c'est la vitesse à laquelle nous allons vers cette solution. Pour cela, nous partons de l'expression de $x_{K+1}$ : 
+Tout d'abord, nous rappelons que le gradient conjugué converge en n itération au maximum. En effet, la solution de notre problème appartient à l'espace de Krylov dans lequel nous cherchons la solution. La convergence n'est donc pas un problème. Ce qui peut poser problème c'est la vitesse à laquelle nous allons vers cette solution. Pour cela, nous partons de l'expression de $x_{k+1}$ : 
 \begin{eqnarray}
 	x_{k+1} &=& x_0 + \alpha_0p_0 + ... + \alpha_kp_k\\
 	&=& x_0 + \gamma_0r_0 + \gamma_1Ar_0 + ... + \gamma_kA^kr_0
 \end{eqnarray}
-Pour trouver ces formules, nous appliquons juste la définition du gradient : nous partons d'un point $x_0$ et à chaque itération k nous avançons dans la direction $p_k$ avec un pas de $\alpha_k$. \\
 
-Dans cette expression on reconnait un polynôme dépendant de A : 
+Pour trouver ces formules, nous appliquons juste la définition du gradient : nous partons d'un point $x_0$ et à chaque itération $k$ nous avançons dans la direction $p_k$ avec un pas de $\alpha_k$. \\
+
+Dans cette expression on reconnait un polynôme dépendant de $A$ : 
 \begin{equation}
 P_k(A) = \gamma_0 I + \gamma_1A + ... + \gamma_kA^k
 \end{equation}
@@ -360,17 +361,17 @@ Ce qui simplifie l'expressions de $x_{k+1}$ en :
 x_{k+1} = x_0 + P_(A)r_0
 \end{equation}
 
-En utilisant la norme définie par le produit scalaire avec la matrice A, nous avons : 
+En utilisant la norme définie par le produit scalaire avec la matrice $A$, nous avons : 
 \begin{eqnarray}
 \frac{1}{2} ||x - x*||^2_A &=& \frac{1}{2}(x - x^*)^TA(x - x^*)\\
 &=& \frac{1}{2} (x^TAx + {x^*}^TAx^* - x^TAx^* - {x^*}^TAx)
 \end{eqnarray}
-Or par définition, A est symétrique, $b = Ax^*$ et en utilisant la propriété de commutation du produit scalaire, nous avons : 
+Or par définition, $A$ est symétrique, $b = Ax^*$ et en utilisant la propriété de commutation du produit scalaire, nous avons : 
 \begin{equation}
 \frac{1}{2} ||x - x*||^2_A = f(x) - f(x^*)
 \end{equation}
 avec $f(x) = \frac{1}{2}x^TAx - b^Tx$
-À chaque nouvelle itération nous allons donc minimiser cette expression pour tout x habitant dans l'espace de Krylov : 
+À chaque nouvelle itération nous allons donc minimiser cette expression pour tout $x$ habitant dans l'espace de Krylov : 
 \begin{equation}
 \min_{P_k} ||x_0 + P_k(A)r_0 - x^*||_A
 \end{equation}
@@ -378,11 +379,11 @@ En introduisant cette minimisation dans l'expression du résidu et le fait que $
 \begin{equation}
 x_{k+1} - x^* = x_0 + P_k^*(A)r_0 - x^* = [I + P_k^*(A)A](x_0 - x^*)
 \end{equation}
-On décompose A grâce à ses valeurs propres : 
+On décompose $A$ grâce à ses valeurs propres : 
 \begin{equation}
 A = \sum_{i = 1}^{n} \lambda_i v_i v_i^T
 \end{equation}
-Et comme les vecteurs propres $v_i$ de A décrivent $\mathbb{R}$ : 
+Et comme les vecteurs propres $v_i$ de $A$ décrivent $\mathbb{R}$ : 
 \begin{equation}
 x_0 - x^* = \sum^n_{i = 1} \xi_iv_i
 \end{equation}
@@ -394,29 +395,29 @@ Ainsi, en utilisant les équations ci-dessus :
 \begin{equation}
 x_{k+1} - x^* = \sum_{i = 1}^{n} [1 + \lambda_i P_k^*(\lambda_i)]\xi_iv_i
 \end{equation}
-On rappelle cette propriété du calcul d'une norme selon une matrice A : 
+On rappelle cette propriété du calcul d'une norme selon une matrice $A$ : 
 $$||z||^2_A = \sum_{i=1}^{n}\lambda_i(v_i^Tz)^2$$
 Ce qui nous permet d'écrire : 
 \begin{equation}
-||x_{k+1} - x^*||^2_A = min_{P_k} \sum_{i = 1}^{n} \lambda_i[1 + \lambda_iP_k(\lambda_i)]^2\xi^2
+||x_{k+1} - x^*||^2_A = \underset{P_k}{\min} \sum_{i = 1}^{n} \lambda_i[1 + \lambda_iP_k(\lambda_i)]^2\xi^2
 \end{equation}
 Le minimum apparaît du fait que le polynôme généré est optimal au regard de la minimisation réalisée dans l'espace de Krylov (Propriété non démontrée ici).
 
-Nous avons donc exprimé la convergence de notre algoritme. Le taux de convergence du gradient conjugué est donné par : 
+Nous avons donc exprimé la convergence de notre algorithme. Le taux de convergence du gradient conjugué est donné par : 
 \begin{equation}
-\min_{P_k}max_{i \leq i \leq n} [1 + \lambda_iP_k(\lambda_i)]^2
+\min_{P_k}\underset{i \leq k \leq n}{\max}\left[1 + \lambda_iP_k(\lambda_i)\right]^2
 \end{equation}
 
 Nous en déduisons les propriétés suivantes (non démontrées) : 
 \begin{itemize}
-	\item Si A possède r < n valeurs propres distinctes alors le gradient conjugué va se terminer avec au plus r itérations
-	\item Soit $\lambda_i$ les valeurs propres de A. Nous avons alors : 
+	\item Si $A$ possède $r < n$ valeurs propres distinctes alors le gradient conjugué va se terminer avec au plus $r$ itérations
+	\item Soit $\lambda_i$ les valeurs propres de $A$. Nous avons alors : 
 	\begin{equation}
 	||x_{k+1} - x^*||^2_A \leq \left( \frac{\lambda_{n - k} - \lambda_1}{\lambda_{n - k} + \lambda_1} \right)^2 ||x_0 - x^*||^2_A
 	\end{equation}
 \end{itemize}
 
-Grâce à toutes ses propriétés, on peut montrer que le gradient conjugué est bien meilleurs que les méthodes de descentes classiques. En effet, il converge bien plus vite et nous sommes sûr qu'il atteindra la solution de notre problème.
+Grâce à toutes ces propriétés, nous pouvons montrer que le gradient conjugué est bien meilleur que les méthodes de descente classiques. En effet, il converge bien plus vite et nous sommes sûrs qu'il atteindra la solution de notre problème.
 \subsection{Algorithme du gradient conjugué}
 Voici la présentation de l'algorithme du gradient conjugué défini ci-dessus : 
 \begin{algorithm}[H]
@@ -462,11 +463,11 @@ def gradient_conjugue(A, b, x0, tol, i_max):
 \end{minted}
 
 \subsection{Quelques mots sur le gradient conjugué non-linéaire}
-Le but est ici de voir si l'on peut améliorer l'algorithme ci-dessus pour l'appliquer à des fonctions quadratiques non convexes voir non linéaires. Nous n'allons présenter ici que la méthode de Fletcher-Reeves. Cette méthode consiste en deux petits changement dans l'algorithme du gradient conjugué. \\
+Le but est ici de voir si l'on peut améliorer l'algorithme ci-dessus pour l'appliquer à des fonctions quadratiques non convexes voire non linéaires. Nous n'allons présenter ici que la méthode de Fletcher-Reeves. Celle-ci consiste en deux petits changements dans l'algorithme du gradient conjugué. \\
 
-La première modification consiste à changer le calcul du pas de descente. En effet, comme nous ne sommes plus dans le cas quadratique, il est beaucoup moins facile de trouver le pas de descente. Afin de trouver ce pas optimal, il nous faut minimiser la fonction partielle dans la direction $p_k$. De plus, le résidu qui était jusqu'alors le gradient de la fonction quadratique devient ici le gradient de la fonction non-linéaire. Cette partie n'étant qu'une ouverture à l'étude non-linéaire, nous allons uniquement détailler sommairement comment choisir le nouvel $\alpha$ et présenter un algorithme. 
+La première modification consiste à changer le calcul du pas de descente. En effet, comme nous ne sommes plus dans le cas quadratique, il est beaucoup moins facile de trouver le pas de descente. Afin de trouver ce pas optimal, il nous faut minimiser la fonction partielle dans la direction $p_k$. De plus, le résidu qui était jusqu'alors le gradient de la fonction quadratique devient ici le gradient de la fonction non-linéaire. Cette partie n'étant qu'une ouverture à l'étude non-linéaire, nous allons uniquement détailler sommairement comment choisir le nouvel $\alpha$ et présenter un algorithme.\\
 
-Voici l'algorithme de Fletcher-Reeves : 
+\noindent Voici l'algorithme de Fletcher-Reeves : 
 
 \begin{algorithm}[H]
 	\caption{Méthode du gradient conjugué}
@@ -486,7 +487,7 @@ Voici l'algorithme de Fletcher-Reeves :
 	\end{algorithmic}
 \end{algorithm}
 
-Pour définir le $\alpha$, nous allons utiliser la condition forte de Wolfe : 
+Pour définir le $\alpha$, nous allons utiliser les conditions fortes de Wolfe\footnote{\url{https://fr.wikipedia.org/wiki/Crit\%C3\%A8res_de_Wolfe}} : 
 \begin{equation}
 f(x_k + \alpha_kp_k) \leq f(x_k) + c_1\alpha_k \nabla f_k^Tp_k
 \end{equation}
@@ -494,12 +495,12 @@ f(x_k + \alpha_kp_k) \leq f(x_k) + c_1\alpha_k \nabla f_k^Tp_k
 |\nabla f(x_k + \alpha_kp_k)^T p_k| \leq -c_2 \nabla f_k^Tp_k, 0 < c_1 < c_2 < \frac{1}{2}
 \end{equation}
 
-Si l'on prends $\alpha$ satisfaisant cela, alors nous savons que les directions de descente vérifient : 
+Si l'on prend $\alpha$ satisfaisant cela, alors nous savons que les directions de descente vérifient : 
 \begin{equation}
 -\frac{1}{1 - c_2}\leq \frac{\nabla f_k^Tp_k}{||\nabla f_k||^2} \leq \frac{2c_2 - 1}{1 - c_2}
 \end{equation}
 
-Ceci permet d'assurer que les valeurs $p_k$ sont des directions de descente (Démonstration non-réalisée car longue et compliquée	).
+Ceci permet d'assurer que les valeurs $p_k$ sont des directions de descente (Démonstration non-réalisée car longue et compliquée).
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % 				ALGO DE TYPE NEWTON
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -510,27 +511,28 @@ Le but d'un algorithme de Newton est d'approximer notre fonction par le dévelop
 \begin{equation}
 f(x+h) = f(x) + <h, \nabla f(x)> + \frac{1}{2} <h, H_f(x)h> + o(||h||^2)
 \end{equation}
-Le principe est assez simple : on se trouve au point x et nous allons choisir le point x+h comme prochain point tel que ce nouveau point minimise le développement de Taylor ci-dessus. Ce développement de Taylor s'apparente à une fonction quadratique.\\
+
+Le principe est assez simple : on se trouve au point $x$ et nous allons choisir le point $x+h$ comme prochain point tel que ce nouveau point minimise le développement de Taylor ci-dessus. Ce développement de Taylor s'apparente à une fonction quadratique.\\
 
 Dans ce type de méthode, nous choisissons notre direction de descente de la manière suivante : 
-
 \begin{equation}
 d_k = -\nabla^2f_k^{-1}\nabla f_k
 \end{equation}
+
 Bien entendu, dans la réalité, nous ne calculons pas l'inverse de la hessienne mais nous résolvons un système linéaire. Cette méthode peut donc paraître un peu lourde. De plus, nous avons une contrainte sur la matrice Hessienne. En effet, celle-ci doit absolument être définie positive. Cela vient du fait que l'on cherche un minimum et qu'il faut absolument que cette matrice soit non-singulière pour pouvoir trouver une nouvelle direction de descente. Si cette matrice ne l'est pas, il est possible de la modifier par l'approche de Goldfeld, Quandt et Trotter : 
 \begin{equation}
 \hat{H}_k = \frac{H_k + \beta I}{1 + \beta}
 \end{equation}
 Une seconde approche serait de transformer la hessienne  : 
 \begin{equation}
-\hat{H}_k = U^TH_kU + \epsilon
+\hat{H}_k = U^TH_kU + \varepsilon
 \end{equation}
-Avec $\epsilon$ une matrice diagonale. Le but est de choisir U telle que $\hat{H}_k$ soit diagonale car cela simplifie les calculs de l'algorithme. Le problème de cette dernière méthode est qu'il faut beaucoup de temps de calcul pour trouver la matrice U. \\
+Avec $\varepsilon$ une matrice diagonale. Le but est de choisir $U$ telle que $\hat{H}_k$ soit diagonale car cela simplifie les calculs de l'algorithme. Le problème de cette dernière méthode est qu'il faut beaucoup de temps de calcul pour trouver la matrice $U$.\\
 
 Nous allons énoncer deux théorèmes sur la convergence de cette méthode : 
 
 \begin{theoreme}
-On suppose que l'on possède un point $\hat{x} \in \mathbb{R}^n$ tel que : 
+  On suppose que l'on possède un point $\hat{x} \in \mathbb{R}^n$ tel que : 
 \begin{itemize}
 	\item C'est un point critique
 	\item $H_f(\hat{x})$ est non-singulière
@@ -540,8 +542,8 @@ Il existe $\varepsilon > 0$ tel que la méthode de Newton converge quadratiqueme
 \end{theoreme}
 
 \begin{theoreme}
-Soit f une fonction $C^2$ et soit $x_0 \in \mathbb{R}^n$. On suppose que f est convexe et que la matrice Hessienne possède de bonnes propriétés :  $ 0 < cI_n < H_f(x) < KI_n$. Alors la fonction f admet un unique minimiseur et la méthode de Newton converge vers celui-ci.\\
-Si $H_f$ est M-Lipschitzienne dans le voisinage de ce minimiseur : 
+Soit $f$ une fonction $\mathcal{C}^2$ et soit $x_0 \in \mathbb{R}^n$. On suppose que $f$ est convexe et que la matrice Hessienne possède de bonnes propriétés :  $ 0 < cI_n < H_f(x) < KI_n$. Alors la fonction $f$ admet un unique minimiseur et la méthode de Newton converge vers celui-ci.\\
+Si $H_f$ est $M$-Lipschitzienne dans le voisinage de ce minimiseur : 
 \begin{itemize}
 	\item Le pas $\alpha_k$ converge vers 1,
 	\item L'algorithme possède une convergence quadratique.
@@ -550,7 +552,7 @@ Si $H_f$ est M-Lipschitzienne dans le voisinage de ce minimiseur :
 
 Néanmoins, il existe plusieurs problèmes avec l'utilisation informatique de cette méthode de Newton : 
 \begin{itemize}
-	\item Il faut calculer la matrice Hessienne ce qui peut devenir très vite très coûteux.
+	\item Il faut calculer la matrice hessienne ce qui peut devenir très vite très coûteux.
 	\item L'inversion de cette hessienne est aussi très coûteuse et très lente en fonction de la taille de celle-ci
 	\item La condition qui oblige la hessienne à être définie positive à chaque étape est très restrictive. 
 \end{itemize}
@@ -562,7 +564,7 @@ Les algorithmes de Quasi-Newton se basent sur les algorithmes de Newton. Cependa
 d_k = -B^{-1}\nabla f_k
 \end{equation}
 
-Avec B une matrice définie positive qui est recalculée à chaque itération afin d'approximer la valeur de la hessienne. L'algorithme de Quasi-Newton que nous allons étudier ci-dessous est  la méthode BFGS. Il existe plusieurs dérivées de cette méthode mais elle repose sur ce même principe de base. La partie théorique étant longue, nous allons dans la suite présenter le pseudo-code de la méthode et quelques-unes de ses propriétés. Avant d'exposer l'algorithme, il faut savoir que dans cet algorithme, nous approximons la hessienne grâce à la formule : 
+Avec $B$ une matrice définie positive qui est recalculée à chaque itération afin d'approximer la valeur de la hessienne. L'algorithme de Quasi-Newton que nous allons étudier ci-dessous est  la méthode BFGS. Il existe plusieurs dérivées de cette méthode mais elles reposent sur ce même principe de base. La partie théorique étant longue, nous allons dans la suite présenter le pseudo-code de la méthode et quelques-unes de ses propriétés. Avant d'exposer l'algorithme, il faut savoir que dans cet algorithme, nous approximons la hessienne grâce à la formule : 
 
 \begin{equation}
 H_{k+1} = (I - \rho_ks_ky_k^T)H_k(I-\rho_ky_ks_k^T)+ \rho_ks_ks_k^T
@@ -594,6 +596,7 @@ Avec :
 Cette algorithme possède un taux de convergence qui est super linéaire. De plus, nous pouvons énoncer le théorème suivant (même si nous n'allons pas le démontrer) : 
 
 \begin{theoreme}
-		Soit $f$ une fonction $C^2$. On se donne $x_0 \in \mathbb{R}^n$ et on suppose $S_0 = {x\in \mathbb{R}^n, f(x) \leq f(x_0)}$ est convexe et que l'approximation de notre matrice Hessienne ne diverge pas : $ 0 < cI_n < H_f(x) < KI_n$. Alors, la suite des valeurs $(x_k)$ solutions de notre problème de minimisation converge vers $x^*$, l'unique minimiseur. De plus, si $H_f$ est Lipschitzienne dans un voisinage de $x^*$, alors la convergence est super-linéaire
+		Soit $f$ une fonction $\mathcal{C}^2$. On se donne $x_0 \in \mathbb{R}^n$ et on suppose $S_0 = {x\in \mathbb{R}^n, f(x) \leq f(x_0)}$ convexe et que l'approximation de notre matrice hessienne ne diverge pas : $ 0 < cI_n < H_f(x) < KI_n$.\\
+		Alors, la suite des valeurs $(x_k)$ solutions de notre problème de minimisation converge vers $x^*$, l'unique minimiseur. De plus, si $H_f$ est Lipschitzienne dans un voisinage de $x^*$, alors la convergence est super-linéaire
 \end{theoreme}
 
