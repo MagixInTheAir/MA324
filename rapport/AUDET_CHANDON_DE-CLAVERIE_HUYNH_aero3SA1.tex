@@ -29,17 +29,11 @@ set decimal separator={,\!},
 }
 \usepackage{ifthen}
 \usepackage{ifpdf}
-\ifpdf
-\usepackage[pdftex]{hyperref}
-\else
-\usepackage{hyperref}
-\fi
+%\ifpdf
+%\usepackage[pdftex]{hyperref}
+%\else
+%\fi
 \usepackage{color}
-\hypersetup{%
-colorlinks=true,
-linkcolor=black,
-citecolor=black,
-urlcolor=black}
 \usepackage{float}
 \renewcommand{\baselinestretch}{1.05}
 \usepackage{fancyhdr}
@@ -94,12 +88,19 @@ urlcolor=black}
 \usepackage{float}
 \usepackage{wasysym}
 \usepackage{wrapfig}
-\usepackage{url}
+\usepackage[hyphens]{url}
+\usepackage[pdftex]{hyperref}
+\hypersetup{%
+	colorlinks=true,
+	linkcolor=black,
+	citecolor=black,
+	urlcolor=black,
+	breaklinks=true}
 \usepackage{eurosym}
 \usepackage{array}
 \usepackage{xcolor}
 \usepackage{supertabular}
-%\usepackage{geometry}
+\usepackage{geometry}
 \usepackage{pdflscape}
 \usepackage{calrsfs}
 \usepackage{minted}
