@@ -1,0 +1,185 @@
+\chapter{Applications des méthodes de descente au deep learning}
+\section{Introduction et Motivation}
+L'intelligence artificielle représente un ensemble de théories et techniques dont le but est de simuler l'intelligence chez la machine. C'est un concept datant des années 1950 mais qui revient à la mode depuis le début du XXIe siècle, à la fois grâce à des avancées technologiques nombreuses mais également dans les mentalités par le biais de films de science fiction. On peut notamment citer la trilogie Matrix, décrivant un monde dystopique où les machines dominent les hommes après avoir dépassé un stade d'intelligence inattendu. Cependant malgré le fait que l'intelligence artificielle a beaucoup évolué ces dernières années, nous sommes encore loin de ce résultat. Actuellement, les appareils que nous utilisons sont généralement limités à un domaine, par exemple la traduction, la navigation... car les systèmes dits intelligents doivent passer par une phase d'apprentissage. Mais cela pourrait bien changer avec le développement du deep learning ou apprentissage profond.
+
+\subsection{Intelligence artificielle, machine learning et deep learning}
+	Mais qu'est-ce que l'apprentissage profond ? C'est en fait un sous-domaine du machine learning (apprentissage machine), lui même étant une branche de l'intelligence artificielle. Voici une représentation sous forme d'arbres permettant de visualiser différentes approches de l'IA : 
+	\begin{figure}[H]
+		\centering\includegraphics[width=0.7\linewidth]{images/branches}
+		\caption{Approches de l'IA}
+	\end{figure}
+	Pour mieux comprendre ce que sont machine learning et deep learning commençons par les \textit{systèmes experts}. Ce sont des logiciels très spécialisés dont le but est de reproduire la "pensée" d'un expert dans un domaine. Cela permet de remplacer une personne pour une tâche bien précise. Par exemple, le premier système expert mis au point, Dendral (en 1965) permettait d'identifier les consitituants chimiques d'un matériau. Les systèmes experts reposent sur des algorithmes "simples", constitués de conditions "if... then...", pouvant être assimilés à des arbres de décision. Ils sont donc utilisables uniquement pour des tâches précises et déterminées à l'avance et ne peuvent sortir de leurs bornes d'application. L'apprentissage de la machine est manuelle, c'est l'homme qui doit implémenter toutes les possibilités lui-même.\\
+	
+	Le machine learning apporte une solution à cela. Dorénavant, l'ordinateur apprend par lui-même. L'homme lui apprend à reconnaitre et à reproduire. On dit qu'on "entraine" la machine. Il faut pour cela lui fournir de grands jeux de données, c'est là qu'intevient le domaine du big data. C'est une des raisons pour lesquelles le développement du machine learning s'est accéléré ces dernières années. Grâce aux données d'entraînement, le programme constitue des données statistiques sur lesquelles il s'appuie ensuite pour faire ses prévisions. \\
+	
+	Enfin, le deep learning est constitué d'algorithmes permettant au logiciel de s'entrainer lui même. Cette dernière approche est basée sur ce que l'on appelle des "réseaux de neurones" à multiples couches, imitant (plus ou moins) le fonctionnement du cerveau humain. Plus ils reçoivent de données, plus ces réseaux de neurones sont performants.
+	
+\section{Architecture d'un réseau de neurones}
+
+	\begin{figure}[H]
+		\centering
+		\includegraphics[width=0.75\linewidth]{images/reseau}
+		\caption{Architecture d'un réseau de neurones}
+	\end{figure}
+	\vspace{-10pt}
+	Les réseaux de neurones sont formés de plusieurs couches successives, comme on peut le voir sur l'image ci-dessus. Sur ce schéma, les n\oe uds représentent les neurones tandis que les flèches illustrent les "poids". La première couche (en jaune) est la couche d'entrée, elle contient les informations à traiter. Tout au bout de la chaîne on a une couche de sortie, elle est ici composée d'un seul neurone mais il peut y en avoir plusieurs. Entre les entrées et sorties, on trouve des couches dites "cachées". C'est là que se font tous les calculs. Le réseau de neurones est parcouru dans les deux sens : d'abord de la couche "entrée" à la couche "sortie" (phase de prédiction ou \textit{forward propagation}), puis dans le sens opposé (phase d'apprentissage ou \textit{back propagation}). Lors de la première phase avant, les valeurs d'entrée sont généralement initialisées de manière aléatoire, puis les valeurs des neurones des couches suivantes sont calculées comme détaillé plus loin. Intéressons-nous donc à un seul neurone pour mieux comprendre son fonctionnement.
+
+\subsection{Détail d'un neurone}
+	
+	\begin{figure}
+		\centering
+		\includegraphics[width=.75\linewidth]{images/neurone}
+		\caption{Neurone détaillé}
+	\end{figure}
+
+	Chaque neurone prend une valeur entre $0$ et $1$, déterminée par ce qu'il reçoit en entrée et par une fonction d'activation. On voit, à gauche de l'image ci-dessous, des valeurs $x_1, x_2, x_3, ..., x_n$. Ce sont les valeurs déduites de la couche précédente. Les poids, notés ici $w$ représentent l'impact qu'ont ces valeurs sur le neurone. Vient ensuite la fonction d'activation. Son rôle est "d'écraser" la valeur de la somme pondérée ($\sum_{k=0}^{N}x_kw_{k}$) pour qu'elle appartienne à un intervalle voulu ($[0, 1]$). On la notera $\varphi$.\\
+	
+	Avant de commencer la partie mathématique, voici un récapitulatif des indices et exposants utilisés dans les équations ci-dessous :
+	$$
+	\begin{cases}
+		L : \text{numéro de couche, la couche d'entrée est $L = 1$}\\
+		k : \text{numéro du neurone de la couche d'entrée}\\
+		K : \text{nombre de neurones de la couche d'entrée (si on ne compte pas le biais\footnotemark \ noté $x_0$)}\\
+		n : \text{numéro du neurone de la couche $L$}\\
+		N : \text{nombre de neurones de la couche $L$ (si on ne compte pas le biais noté $a_0^{(L)}$)}\\
+		m : \text{numéro du neurone de la couche $L-1$}\\
+		M : \text{nombre de neurones de la couche $L-1$ (si on ne compte pas le biais noté $a_0^{(L-1)}$)}
+	\end{cases}
+	$$
+	\footnotetext{Pour en apprendre plus sur les biais : \\ \url{https://towardsdatascience.com/everything-you-need-to-know-about-neural-networks-and-backpropagation-machine-learning-made-easy-e5285bc2be3a}\\\url{https://deeplylearning.fr/cours-theoriques/}}
+	On peut donc écrire que la valeur du premier neurone de la première couche cachée est : 
+	$$a_1^{(2)} = \varphi\left(\sum_{k=0}^{K}x_kw_{k1}^{(1)}\right)$$
+	On peut le généraliser au $n^{\text{ème}}$ neurone de cette couche :
+	$$a_n^{(2)} = \varphi\left(\sum_{k=0}^{K}x_kw_{kn}^{(1)}\right)$$
+	
+	\pagebreak
+	\noindent Si l'on passe à la couche suivante, le premier neurone de celle-ci s'écrit comme la somme pondérée des valeurs des neurones de la couche précédenten multipliées par leur poids sur ce neurone : 
+	$$a_1^{(3)}  = \varphi\left(\sum_{i=0}^{N}a_i^{(2)}w_{i1}^{(2)}\right)$$
+	C'est donc une somme de sommes et pour le $n^{\text{ème}}$ neurone de la 2\ieme{} couche cachée, elle vaut :
+	$$a_n^{(3)} = \varphi\left(\sum_{i=0}^{N}\varphi\left(\sum_{k=0}^{K}x_kw_{kn}^{(1)}\right)a_i w_{i1}^{(2)}\right)$$
+	
+	\noindent Finalement, pour n'importe quel neurone, on a :
+	$$ a_n^{(L)} = \varphi\left(\sum_{m=0}^{M}\left[...\left[\varphi\left(\sum_{i=0}^{N}\varPhi\left(\sum_{k=0}^{K}x_kw_{kn}^{(1)}\right)w_{in}^{(2)}\right)\right]...\right]w_{nm}^{(L)}\right) $$
+	
+	
+\subsection{Fonction d'activation}
+	Nous n'avons pas encore parlé de la fonction d'activation, ici $\varphi$. Son rôle est de dire si un neurone doit être "actif" ou non, selon la valeur de la somme pondérée. Nous ne nous attarderons pas trop dessus mais il faut tout de même savoir quelle fonction utiliser afin de la dériver par la suite\footnote{Les fonctions d'activation plus en détails : \url{https://towardsdatascience.com/activation-functions-neural-networks-1cbd9f8d91d6}}. Une des fonctions d'activation les plus répandues est la fonction sigmoïde définie par $\sigma(x) = \frac{e^x}{1+e^x}$ et dont les valeurs sont comprises entre \mbox{$0$ et $1$.}
+		
+\subsection{Fonction erreur}
+	Après chaque phase avant, on obtient des valeurs pour chacun des neurones de la couche de sortie. Cependant ces valeurs ont été calculées à partir d'entrées initialisées aléatoirement. Il faut donc comparer ces résultats avec ceux attendus. Plusieurs fonctions erreur permettent de faire cela. Une liste non exhaustive est disponible \href{https://stats.stackexchange.com/questions/154879/a-list-of-cost-functions-used-in-neural-networks-alongside-applications}{ici}\footnote{\url{https://stats.stackexchange.com/questions/154879/a-list-of-cost-functions-used-in-neural-networks-alongside-applications}}. On peut par exemple citer la fonction d'erreur quadratique : 
+	$$C_{MST}(W, B, S^r, E^r) = 0.5\sum\limits_j (a^L_j - E^r_j)^2$$
+	où $W$ est la matrice des poids du réseau de neurones, $B$ contient les biais, $S^r$ est l'entrée d'une phase avant et $E^r$, la sortie attendue.\\
+	
+	C'est lors de la phase d'apprentissage que l'on est face à un problème d'optimisation. L'objectif est de minimiser cette fonction erreur. On utilise pour cela une méthode de descente de gradient. Cependant, de cette manière nous ne sommes pas toujours certain de trouver le minimum global de la fonction. C'est pourquoi il faut parfois utiliser la fonction logarithme. C'est le cas de la \textit{L2-regularized cost function}\footnote{Les poids sont souvent notés $\theta$ comme dans cet exemple.} :
+	$$J(\theta) = -{1 \over m} \left[ \sum_{i=1}^m \sum_{k=1}^K y_k^{(i)}\,log(h_\theta(x^{(i)}))_k + (1-y_k^{(i)})\,log(1 - (h_\theta(x^{(i)}))_k) \right] + {\lambda \over 2m } \sum_{l=1}^{L-1} \sum_{i=1}^{s_l} \sum_{j=1}^{s_{l+1}} (\theta_{ji}^{(l)})^2$$
+
+	Pendant la phase arrière, les poids et biais sont mis à jour. La phase avant s'exécute à nouveau, recalculant les valeurs des différents neurones jusqu'à la couche de sortie. Cette alternance entre les deux phases se répète jusqu'à ce que l'erreur soit suffisamment faible ou lorsqu'une condition d'arrêt est atteinte.	
+	
+\section{Application des algorithmes}
+	Nous voilà donc avec un ensemble de valeurs de sortie proches de nos attentes. Mais quelles attentes ? Que signifient ces valeurs ? \\
+	
+	Nous avons choisi pour ce rapport de prendre l'exemple de la reconnaissance de vêtements. Nous avons une liste de catégorie (écharpe, blouson, pantalon, chaussure..) et le but est de savoir à quelle catégorie appartient un vêtement. On assigne à chaque sortie une catégorie. Si l'on veut faire deviner une écharpe alors toutes les sorties devront prendre la valeur $0$ sauf la sortie correspondant aux écharpes qui devra être à $1$. Maintenant que nous connaissons les sorties attendues, l'algorithme peut calculer la valeur de la fonction erreur et tenter de la minimiser. Après plusieurs itérations on obtient alors une probabilité pour chaque catégorie, en espérant que la sortie associée à "écharpes" est proche de 1 et supérieure à toutes les autres.\\
+	
+	Pour coder l'algorithme en python, nous avons fait appel à la bibliothèque mathématique \textit{Tensorflow} \footnote{\url{www.tensorflow.org}}. Le code est le suivant :
+	\begin{minted}[linenos, autogobble, breaklines]{python}
+	from __future__ import absolute_import, division, print_function
+	
+	import tensorflow as tf
+	from tensorflow import keras
+	
+	import numpy as np
+	import matplotlib.pyplot as plt
+	
+	def plot_image(i, predictions_array, true_label, img):
+	predictions_array, true_label, img = predictions_array[i], true_label[i], img[i]
+	plt.grid(False)
+	plt.xticks([])
+	plt.yticks([])
+	
+	plt.imshow(img, cmap=plt.cm.binary)
+	
+	predicted_label = np.argmax(predictions_array)
+	if predicted_label == true_label:
+	color = 'blue'
+	else:
+	color = 'red'
+	
+	plt.xlabel("{} {:2.0f}% ({})".format(class_names[predicted_label],
+	100 * np.max(predictions_array),
+	class_names[true_label]),
+	color=color)
+	
+	
+	def plot_value_array(i, predictions_array, true_label):
+	predictions_array, true_label = predictions_array[i], true_label[i]
+	plt.grid(False)
+	plt.xticks([])
+	plt.yticks([])
+	thisplot = plt.bar(range(10), predictions_array, color="#777777")
+	plt.ylim([0, 1])
+	predicted_label = np.argmax(predictions_array)
+	
+	thisplot[predicted_label].set_color('red')
+	thisplot[true_label].set_color('blue')
+	
+	
+	print(tf.__version__)
+	
+	fashion_mnist = keras.datasets.fashion_mnist
+	
+	(train_images, train_labels), (test_images, test_labels) = fashion_mnist.load_data()
+	
+	class_names = ['T-shirt/top', 'Trouser', 'Pullover', 'Dress', 'Coat',
+	'Sandal', 'Shirt', 'Sneaker', 'Bag', 'Ankle boot']
+	
+	train_images = train_images / 255.0
+	
+	test_images = test_images / 255.0
+	
+	plt.figure()
+	plt.imshow(train_images[10])
+	plt.colorbar()
+	plt.grid(False)
+	plt.show()
+	
+	plt.figure(figsize=(10, 10))
+	for i in range(25):
+	plt.subplot(5, 5, i + 1)
+	plt.xticks([])
+	plt.yticks([])
+	plt.grid(False)
+	plt.imshow(train_images[i], cmap=plt.cm.binary)
+	plt.xlabel(class_names[train_labels[i]])
+	plt.show()
+	
+	model = keras.Sequential([
+	keras.layers.Flatten(input_shape=(28, 28)),
+	keras.layers.Dense(128, activation=tf.nn.relu),
+	keras.layers.Dense(10, activation=tf.nn.softmax)
+	])
+	
+	model.compile(optimizer='adam',
+	loss='sparse_categorical_crossentropy',
+	metrics=['accuracy'])
+	
+	model.fit(train_images, train_labels, epochs=5)
+	
+	test_loss, test_acc = model.evaluate(test_images, test_labels)
+	
+	print('Test accuracy:', test_acc)
+	predictions = model.predict(test_images)
+	
+	num_rows = 5
+	num_cols = 3
+	num_images = num_rows * num_cols
+	plt.figure(figsize=(2 * 2 * num_cols, 2 * num_rows))
+	for i in range(num_images):
+	plt.subplot(num_rows, 2 * num_cols, 2 * i + 1)
+	plot_image(i, predictions, test_labels, test_images)
+	plt.subplot(num_rows, 2 * num_cols, 2 * i + 2)
+	plot_value_array(i, predictions, test_labels)
+	
+	plt.show()
+	\end{minted}
+	
+	
