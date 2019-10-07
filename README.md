@@ -1,2 +1,4 @@
 # MA324
-le retour de krylov baby !!!! 
+## Theory and benchmarking of gradient descent methods for machine learning applications
+
+Code and data for the report
